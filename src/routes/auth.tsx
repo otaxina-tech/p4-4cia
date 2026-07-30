@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import brasao from "@/assets/brasao.png";
+import brasaoAsset from "@/assets/brasao-9bc.png.asset.json";
+const brasao = brasaoAsset.url;
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

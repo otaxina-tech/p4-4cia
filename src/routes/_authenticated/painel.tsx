@@ -11,7 +11,8 @@ import {
   Users,
 } from "lucide-react";
 import * as XLSX from "xlsx";
-import brasao from "@/assets/brasao.png";
+import brasaoAsset from "@/assets/brasao-9bc.png.asset.json";
+const brasao = brasaoAsset.url;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
