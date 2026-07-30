@@ -180,7 +180,7 @@ function Index() {
               </div>
               <Select value={posto} onValueChange={setPosto}>
                 <SelectTrigger className="w-48">
-                  <SelectValue />
+                  <SelectValue placeholder="Todos os postos" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos os postos</SelectItem>
@@ -193,7 +193,7 @@ function Index() {
               </Select>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="w-48">
-                  <SelectValue />
+                  <SelectValue placeholder="Todos os status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos os status</SelectItem>
