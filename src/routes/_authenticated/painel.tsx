@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import brasaoAsset from "@/assets/brasao-9bc.png.asset.json";
-const brasao = brasaoAsset.url;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -132,10 +131,8 @@ function Index() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <div className="flex items-center gap-3">
             <img
-              src={brasao}
+              src={brasaoAsset.url}
               alt="Brasão do 9ºB.C - 4ª CIA"
-              width={1024}
-              height={1024}
               className="size-10 shrink-0 object-contain"
             />
             <div>
