@@ -1,10 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   ssr: false,
-  beforeLoad: () => {
-    throw redirect({ to: "/painel" });
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getUser();
+    throw redirect({ to: data.user ? "/painel" : "/auth" });
   },
+
   head: () => ({
     meta: [
       { title: "CONTROLE DE MATERIAIS | 9ºB.C - 4ª CIA" },
