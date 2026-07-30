@@ -1,12 +1,11 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   AlertTriangle,
   CalendarClock,
   CheckCircle2,
   ClipboardList,
   FileDown,
-  LogIn,
   LogOut,
   Search,
   Shield,
@@ -36,8 +35,8 @@ import { toast } from "sonner";
 import { StatusBadge } from "@/components/status-badge";
 import { EntregaDialog } from "@/components/entrega-dialog";
 import { FichaDialog } from "@/components/ficha-dialog";
+import { useQueryClient } from "@tanstack/react-query";
 import { useControle } from "@/hooks/use-controle";
-import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import {
   formatarData,
@@ -51,13 +50,13 @@ import {
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
     meta: [
-      { title: "CONTROLE DE MATERIAIS | 9ºB.C - 4ª CIA" },
+      { title: "Painel | CONTROLE DE MATERIAIS 9ºB.C - 4ª CIA" },
       {
         name: "description",
         content:
           "Controle de entrega de materiais do efetivo: fardamento, bota, boina, cinturão, coldre e mais, com validade, dias restantes e alertas de vencimento.",
       },
-      { property: "og:title", content: "CONTROLE DE MATERIAIS" },
+      { property: "og:title", content: "Painel — CONTROLE DE MATERIAIS" },
       {
         property: "og:description",
         content:
@@ -70,8 +69,9 @@ export const Route = createFileRoute("/_authenticated/painel")({
 
 function Index() {
   const { policiais, historico, registrarEntrega, removerEntrega } = useControle();
-  const { usuario } = useAuth();
-  const podeEditar = !!usuario;
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const podeEditar = true;
   const [busca, setBusca] = useState("");
   const [posto, setPosto] = useState("todos");
   const [status, setStatus] = useState("todos");
@@ -142,23 +142,17 @@ function Index() {
             <Button variant="outline" onClick={exportar}>
               <FileDown /> Exportar planilha
             </Button>
-            {podeEditar ? (
-              <Button
-                variant="ghost"
-                onClick={async () => {
-                  await supabase.auth.signOut();
-                  toast.success("Sessão encerrada.");
-                }}
-              >
-                <LogOut /> Sair
-              </Button>
-            ) : (
-              <Button asChild>
-                <Link to="/auth">
-                  <LogIn /> Entrar para editar
-                </Link>
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                await queryClient.cancelQueries();
+                queryClient.clear();
+                await supabase.auth.signOut();
+                navigate({ to: "/auth", replace: true });
+              }}
+            >
+              <LogOut /> Sair
+            </Button>
           </div>
         </div>
       </header>
