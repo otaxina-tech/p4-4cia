@@ -1,0 +1,832 @@
+[
+{
+"posto": "CAP PM",
+"re": "143801-8",
+"nome": "DIEGO ALGARRA DIAS"
+},
+{
+"posto": "1° SGT PM",
+"re": "129206-4",
+"nome": "MARCELO ROBERTO PANTALEÃO"
+},
+{
+"posto": "2° SGT PM",
+"re": "126979-8",
+"nome": "JOSÉ LUIS DE SOUSA SILVA"
+},
+{
+"posto": "2° SGT PM",
+"re": "967231-1",
+"nome": "KATIA REGINA OLIVEIRA DE SOUZA ALMEIDA"
+},
+{
+"posto": "3° SGT PM",
+"re": "975862-3",
+"nome": "NEYMAR AMADO"
+},
+{
+"posto": "3° SGT PM",
+"re": "972984-4",
+"nome": "LUÍS ANTÔNIO RODRIGUES DA COSTA"
+},
+{
+"posto": "3° SGT PM",
+"re": "973015-0",
+"nome": "ANDRÉ LUIS GOMES CARVALHO"
+},
+{
+"posto": "3° SGT PM",
+"re": "975129-7",
+"nome": "MILTON FERNANDES DE SIQUEIRA JUNIOR"
+},
+{
+"posto": "3° SGT PM",
+"re": "972569-5",
+"nome": "PAULO ROGÉRIO MARTINS"
+},
+{
+"posto": "3° SGT PM",
+"re": "980661-0",
+"nome": "RODRIGO DE SOUZA SANTOS"
+},
+{
+"posto": "3° SGT PM",
+"re": "122418-2",
+"nome": "MISAEL CORRÊA DA SILVA"
+},
+{
+"posto": "3° SGT PM",
+"re": "171653-A",
+"nome": "DANILO DA SILVA NASCIMENTO"
+},
+{
+"posto": "3° SGT PM",
+"re": "191357-3",
+"nome": "VICTOR MAURICIO SILVA DOS SANTOS"
+},
+{
+"posto": "3° SGT PM",
+"re": "963847-4",
+"nome": "EDIVÁ SAMPAIO DA SILVA"
+},
+{
+"posto": "3° SGT PM",
+"re": "982091-4",
+"nome": "LAURA FONTES FERREIRA DO CARMO"
+},
+{
+"posto": "3° SGT PM",
+"re": "100882-0",
+"nome": "TAIS GALVES LOPES RODRIGUES"
+},
+{
+"posto": "3° SGT PM",
+"re": "991263-A",
+"nome": "CICERO IRINEU DA SILVA"
+},
+{
+"posto": "CB PM",
+"re": "960456-1",
+"nome": "MARI HELENA GALASSI SILVA"
+},
+{
+"posto": "CB PM",
+"re": "976595-6",
+"nome": "VILMA CRISTINA RIBEIRO"
+},
+{
+"posto": "CB PM",
+"re": "990790-4",
+"nome": "AQUILES DO CARMO MARQUES"
+},
+{
+"posto": "CB PM",
+"re": "111383-6",
+"nome": "PAULO HENRIQUE ELOY RODRIGUES"
+},
+{
+"posto": "CB PM",
+"re": "115243-2",
+"nome": "HELENA DE BARROS VIDAL"
+},
+{
+"posto": "CB PM",
+"re": "115364-1",
+"nome": "KLEBER VIEIRA MAESTRE"
+},
+{
+"posto": "CB PM",
+"re": "119929-3",
+"nome": "ALAN GARANITO DE ALMEIDA"
+},
+{
+"posto": "CB PM",
+"re": "128744-3",
+"nome": "RONILDO FRANCISCO DA SILVA"
+},
+{
+"posto": "CB PM",
+"re": "134344-A",
+"nome": "FERNANDO BARRETO DE ALMEIDA"
+},
+{
+"posto": "CB PM",
+"re": "135650-0",
+"nome": "ERITON SILVA DE SOUZA"
+},
+{
+"posto": "CB PM",
+"re": "137064-2",
+"nome": "LUIZ CARLOS DA SILVA JUNIOR"
+},
+{
+"posto": "CB PM",
+"re": "137570-9",
+"nome": "LUIZ FERNANDO FONSECA BITTENCOURT"
+},
+{
+"posto": "CB PM",
+"re": "140282-0",
+"nome": "MARCO ANTONIO DA SILVA MONTEIRO"
+},
+{
+"posto": "CB PM",
+"re": "155878-1",
+"nome": "RAFAEL SEBASTIÃO DO NASCIMENTO"
+},
+{
+"posto": "CB PM",
+"re": "192573-3",
+"nome": "LUCAS BARBOSA DE LIMA"
+},
+{
+"posto": "CB PM",
+"re": "142903-5",
+"nome": "BRUNO FELIPE PERNAMBUCO"
+},
+{
+"posto": "CB PM",
+"re": "143563-9",
+"nome": "FABIO GIOVANNINI DE VASCONCELOS"
+},
+{
+"posto": "CB PM",
+"re": "147444-8",
+"nome": "RODRIGO ALVES LIMA"
+},
+{
+"posto": "CB PM",
+"re": "147585-1",
+"nome": "JORDAN LEANDRO DE ALCANTARA"
+},
+{
+"posto": "CB PM",
+"re": "201910-8",
+"nome": "BRUNA LORRAINE PEREIRA ALVES"
+},
+{
+"posto": "CB PM",
+"re": "193454-6",
+"nome": "FLÁVIO MOTA NOGUEIRA"
+},
+{
+"posto": "SD PM",
+"re": "142709-1",
+"nome": "EDUARDO WILMERS DE SIQUEIRA"
+},
+{
+"posto": "SD PM",
+"re": "150439-8",
+"nome": "WELLINGTON PEREIRA DE OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "152076-8",
+"nome": "CAMILA SILVA VETTORAZZO"
+},
+{
+"posto": "SD PM",
+"re": "153166-2",
+"nome": "RODOLFO AFONSO MATIAS"
+},
+{
+"posto": "SD PM",
+"re": "160332-9",
+"nome": "ROBSON JAQUES DE SOUZA"
+},
+{
+"posto": "SD PM",
+"re": "160843-6",
+"nome": "TAINA RODRIGUES DOS SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "190148-6",
+"nome": "VITOR HENRIQUE DOS SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "193785-8",
+"nome": "WELLINGTON FERREIRA DE ARAUJO SILVA"
+},
+{
+"posto": "SD PM",
+"re": "194523-8",
+"nome": "MARINA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "195637-0",
+"nome": "DAVYD ARIEL SANTOS LIMA"
+},
+{
+"posto": "SD PM",
+"re": "200735-5",
+"nome": "HAMILTON HOHOTA MENDONÇA"
+},
+{
+"posto": "SD PM",
+"re": "202111-A",
+"nome": "VITALICIO VALMIR DOS SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "210053-3",
+"nome": "CLEVERSON IRENO DE OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "210087-8",
+"nome": "ANDREI SOARES TORRES"
+},
+{
+"posto": "SD PM",
+"re": "210484-9",
+"nome": "WAGNER RAFAEL DE SOUZA"
+},
+{
+"posto": "SD PM",
+"re": "210593-A",
+"nome": "EDRES DE SOUZA MOREIRA"
+},
+{
+"posto": "SD PM",
+"re": "210761-9",
+"nome": "ERICLES HENRIQUE ALVES DOS SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "211053-9",
+"nome": "CARLOS NATHAN ROCHA"
+},
+{
+"posto": "SD PM",
+"re": "211311-2",
+"nome": "FERNANDO ALVES ABRANTES DA ROSA"
+},
+{
+"posto": "SD PM",
+"re": "211327-9",
+"nome": "VAGNER DA SILVA NUNES"
+},
+{
+"posto": "SD PM",
+"re": "211353-8",
+"nome": "GABRIEL LUIS DA SILVA RIBEIRO"
+},
+{
+"posto": "SD PM",
+"re": "220014-7",
+"nome": "PEDRO VICTOR FERNANDES NASCIMENTO"
+},
+{
+"posto": "SD PM",
+"re": "220183-6",
+"nome": "JOAO VICTOR LUCHESI E SILVA"
+},
+{
+"posto": "SD PM",
+"re": "220256-5",
+"nome": "CARLOS ANDRE PACHECO DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "220751-6",
+"nome": "LEONARDO APARECIDO RAGASSI"
+},
+{
+"posto": "SD PM",
+"re": "230502-0",
+"nome": "LUCAS DAL FABBRO"
+},
+{
+"posto": "SD PM",
+"re": "230707-3",
+"nome": "LEONARDO PEREIRA BARRETOS"
+},
+{
+"posto": "SD PM",
+"re": "230774-0",
+"nome": "RENAN ALVES BERTOSSI"
+},
+{
+"posto": "SD PM",
+"re": "231105-4",
+"nome": "WILSOM GOMES DE ALMEIDA"
+},
+{
+"posto": "SD PM",
+"re": "231302-2",
+"nome": "BRUNO SOARES DE CAMPOS"
+},
+{
+"posto": "SD PM",
+"re": "231460-6",
+"nome": "LUIZ JUNIO BATISTA CAVALARI"
+},
+{
+"posto": "SD PM",
+"re": "231955-1",
+"nome": "WESLEY BARBOSA MAGALHÃES"
+},
+{
+"posto": "SD PM",
+"re": "240243-2",
+"nome": "GABRIEL MARTINS ALVES DE OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "240354-4",
+"nome": "GUSTAVO DOS SANTOS GONÇALVES"
+},
+{
+"posto": "SD PM",
+"re": "240483-4",
+"nome": "ANDRIELE FERNANDES MONTALVÃO"
+},
+{
+"posto": "SD PM",
+"re": "240763-9",
+"nome": "LEONARDO JOSE BORGES"
+},
+{
+"posto": "SD PM",
+"re": "240824-4",
+"nome": "OZENILDA DOS REIS FERREIRA"
+},
+{
+"posto": "SD PM",
+"re": "241093-1",
+"nome": "THIAGO DOS SANTOS SANT'ANA"
+},
+{
+"posto": "SD PM",
+"re": "241189-0",
+"nome": "VITOR DIAS DE OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "241386-8",
+"nome": "ÉRICA BISPO OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "241476-7",
+"nome": "WILHAM NEI PAUFERRO DUARTE"
+},
+{
+"posto": "SD PM",
+"re": "241495-3",
+"nome": "NEIVERTON FERREIRA DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "241523-2",
+"nome": "LUIS GUSTAVO NASCIMENTO DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "241586-A",
+"nome": "KEISON MULLER LUGAO PORTELA"
+},
+{
+"posto": "SD PM",
+"re": "241617-4",
+"nome": "MATHEUS BERNAVA MANZANO"
+},
+{
+"posto": "SD PM",
+"re": "241701-4",
+"nome": "YHARIMA FLOR HERNANDEZ GUERRERO"
+},
+{
+"posto": "SD PM",
+"re": "241868-1",
+"nome": "CARLOS ALBERTO DE FREITAS"
+},
+{
+"posto": "SD PM",
+"re": "241937-8",
+"nome": "YGOR ABREU DE MORAIS"
+},
+{
+"posto": "SD PM",
+"re": "241986-6",
+"nome": "GUILHERME MARCELO LIMA"
+},
+{
+"posto": "SD PM",
+"re": "242094-5",
+"nome": "MATHEUS MARTINS HOLA"
+},
+{
+"posto": "SD PM",
+"re": "242108-9",
+"nome": "VINICIUS PIEDADE AIRES GUIMARAES"
+},
+{
+"posto": "SD PM",
+"re": "242160-7",
+"nome": "GABRIEL BERTONI DE OLIVEIRA FRANCISCO"
+},
+{
+"posto": "SD PM",
+"re": "242226-3",
+"nome": "SAMANTA CLAUDIA CARVALHO CARICATI"
+},
+{
+"posto": "SD PM",
+"re": "242227-1",
+"nome": "VALÉRIA FRANCIELLA DE SOUSA RODRIGUES"
+},
+{
+"posto": "SD PM",
+"re": "242254-9",
+"nome": "LEONARDO MATEUS DE LIMA"
+},
+{
+"posto": "SD PM",
+"re": "242269-7",
+"nome": "RODRIGO GUINSEI TAKAESU"
+},
+{
+"posto": "SD PM",
+"re": "242346-4",
+"nome": "EULALIA CRISTINA PEREIRA DE OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "242414-2",
+"nome": "ANDREW CARLOS LIMA DE JESUS"
+},
+{
+"posto": "SD PM",
+"re": "242427-4",
+"nome": "GABRIEL HENRIQUE SILVA SOUZA"
+},
+{
+"posto": "SD PM",
+"re": "242476-2",
+"nome": "WELLINGTON HENRIQUE JOSE DE SÁ"
+},
+{
+"posto": "SD PM",
+"re": "242599-8",
+"nome": "CARLOS HENRIQUE VIEIRA DOS SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "242616-1",
+"nome": "LEONARDO CESAR ALVES COELHO"
+},
+{
+"posto": "SD PM",
+"re": "242683-8",
+"nome": "JOSÉ ISRAEL GONÇALVES CORREA"
+},
+{
+"posto": "SD PM",
+"re": "242725-7",
+"nome": "LEONARDO GARCIA DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "242741-9",
+"nome": "ANA CARLA LOPES"
+},
+{
+"posto": "SD PM",
+"re": "242773-7",
+"nome": "JOÃO PAULO QUEIROZ DE OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "242818-A",
+"nome": "GUSTAVO MACHADO SIQUEIRA"
+},
+{
+"posto": "SD PM",
+"re": "243089-4",
+"nome": "MURILO HENRIQUE RODRIGUES BATISTA"
+},
+{
+"posto": "SD PM",
+"re": "243395-8",
+"nome": "DOUGLAS DAVI RODRIGUES DOS SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "243829-1",
+"nome": "JOÃO VITOR ALMEIDA DE SIQUEIRA"
+},
+{
+"posto": "SD PM",
+"re": "243882-8",
+"nome": "JULIO CESAR DE OLIVEIRA BARBOSA DOS SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "243916-6",
+"nome": "VANUSA MATA DE MACEDO"
+},
+{
+"posto": "SD PM",
+"re": "243990-5",
+"nome": "LUCAS TERRA JENSEN SALES"
+},
+{
+"posto": "SD PM",
+"re": "244043-1",
+"nome": "ELIO DE SOUSA VIEIRA"
+},
+{
+"posto": "SD PM",
+"re": "244132-2",
+"nome": "VICTOR MARTINS DE ARAUJO"
+},
+{
+"posto": "SD PM",
+"re": "244149-7",
+"nome": "WENDEL ARLINDO SOARES GONÇALVES"
+},
+{
+"posto": "SD PM",
+"re": "244242-6",
+"nome": "EDILSON GUILHERME GOMES MACHADO"
+},
+{
+"posto": "SD PM",
+"re": "244349-0",
+"nome": "WILLIAM DE SOUZA COELHO"
+},
+{
+"posto": "SD PM",
+"re": "244525-5",
+"nome": "ERIK LEON GOMES DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "244702-9",
+"nome": "MURILO AUGUSTO QUINTAS"
+},
+{
+"posto": "SD PM",
+"re": "244954-4",
+"nome": "BHRENO ALEPH SILVA NOGUEIRA"
+},
+{
+"posto": "SD PM",
+"re": "244983-8",
+"nome": "BRENO ROBERTO DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "245075-5",
+"nome": "KAUAN RANUCI VIANA"
+},
+{
+"posto": "SD PM",
+"re": "245113-1",
+"nome": "ALAN OTÁVIO VILHEGAS"
+},
+{
+"posto": "SD PM",
+"re": "250023-0",
+"nome": "EDUARDO ESPÍRITO SANTO DA CRUZ"
+},
+{
+"posto": "SD PM",
+"re": "250331-0",
+"nome": "RAFAEL GOMES SALLES"
+},
+{
+"posto": "SD PM",
+"re": "250385-9",
+"nome": "GUILHERME CRUZ DE LIRA"
+},
+{
+"posto": "SD PM",
+"re": "250393-0",
+"nome": "EMERSON DA SILVA FERNANDES"
+},
+{
+"posto": "SD PM",
+"re": "250411-1",
+"nome": "MARIANE CARINA LOURENÇO"
+},
+{
+"posto": "SD PM",
+"re": "250556-8",
+"nome": "KAUAN HENRIQUE DE CAMPOS"
+},
+{
+"posto": "SD PM",
+"re": "250629-7",
+"nome": "VINÍCIUS FERNANDES DONNANGELO"
+},
+{
+"posto": "SD PM",
+"re": "250664-5",
+"nome": "VICTOR DA SILVA SALMAZO"
+},
+{
+"posto": "SD PM",
+"re": "250756-A",
+"nome": "JONATAS RODRIGUES DE SOUZA AMADO"
+},
+{
+"posto": "SD PM",
+"re": "250963-6",
+"nome": "LUZIA MARIA PINTO GUEDES"
+},
+{
+"posto": "SD PM",
+"re": "250969-5",
+"nome": "SARA DOS SANTOS ALVES"
+},
+{
+"posto": "SD PM",
+"re": "250998-9",
+"nome": "LUIZ FERNANDO SOARES"
+},
+{
+"posto": "SD PM",
+"re": "251073-1",
+"nome": "LEONARDO GOMES AMANCIO"
+},
+{
+"posto": "SD PM",
+"re": "251083-9",
+"nome": "FÁBIO HENRIQUE DA SILVA MARTINS"
+},
+{
+"posto": "SD PM",
+"re": "251102-9",
+"nome": "LUAN MARCELO DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "251261-A",
+"nome": "MANOEL JOSÉ TAVARES FELICIANO"
+},
+{
+"posto": "SD PM",
+"re": "251327-7",
+"nome": "PEDRO LUCAS SANTANA ALMEIDA"
+},
+{
+"posto": "SD PM",
+"re": "251606-3",
+"nome": "LARISSA FERNANDA MENIN"
+},
+{
+"posto": "SD PM",
+"re": "251618-7",
+"nome": "LUCAS FELIPE DE OLIVEIRA DUTRA"
+},
+{
+"posto": "SD PM",
+"re": "251678-A",
+"nome": "RAPHAEL HONÓRIO DE OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "251716-7",
+"nome": "GUILHERME MAIA DOS SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "251840-6",
+"nome": "BEATRIZ CUSTÓDIO DE ALENCAR"
+},
+{
+"posto": "SD PM",
+"re": "251975-5",
+"nome": "MATHEUS DO NASCIMENTO FONSECA"
+},
+{
+"posto": "SD PM",
+"re": "252061-3",
+"nome": "DANIELE TALITA MOREIRA BARRETO"
+},
+{
+"posto": "SD PM",
+"re": "252063-0",
+"nome": "MATEUS BORGES FERREIRA"
+},
+{
+"posto": "SD PM",
+"re": "252110-5",
+"nome": "CARLOS HENRIQUE SILVA"
+},
+{
+"posto": "SD PM",
+"re": "252116-4",
+"nome": "CÍCERO CARLOS DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "252286-1",
+"nome": "JEFFERSON ALVES CORRÊA"
+},
+{
+"posto": "SD PM",
+"re": "252391-4",
+"nome": "JOÃO VICTOR FERNANDES IZIDORO DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "252523-2",
+"nome": "OTÁVIO HENRIQUE FIGUEIREDO FERREIRA"
+},
+{
+"posto": "SD PM",
+"re": "252533-0",
+"nome": "YURI PERDIGÃO FERNANDES DE CARVALHO"
+},
+{
+"posto": "SD PM",
+"re": "252549-6",
+"nome": "PAULO CÉSAR CRUZ TOMAS JÚNIOR"
+},
+{
+"posto": "SD PM",
+"re": "252558-5",
+"nome": "CLAYDZZER RIQUELME SOUZA SANTOS"
+},
+{
+"posto": "SD PM",
+"re": "252787-1",
+"nome": "YAN QUEIROZ DA SILVA RIBEIRO"
+},
+{
+"posto": "SD PM",
+"re": "252797-9",
+"nome": "JULIA RAFAELLA DE MOURA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "252991-2",
+"nome": "RENATO SANTOS FERNANDES"
+},
+{
+"posto": "SD PM",
+"re": "253035-0",
+"nome": "CAIO FERNANDO DA SILVA PLAÚDIO"
+},
+{
+"posto": "SD PM",
+"re": "253099-6",
+"nome": "LEONARDO VIEIRA MENDES"
+},
+{
+"posto": "SD PM",
+"re": "253109-7",
+"nome": "PEDRO HENRIQUE VIEIRA CERQUEIRA"
+},
+{
+"posto": "SD PM",
+"re": "253218-2",
+"nome": "WERLEM ISRAEL BEZERRA DA SILVA"
+},
+{
+"posto": "SD PM",
+"re": "253318-9",
+"nome": "HAYSSA CYPRIANO DE OLIVEIRA"
+},
+{
+"posto": "SD PM",
+"re": "253442-8",
+"nome": "RONYE VIEIRA PARANHOS"
+},
+{
+"posto": "SD PM",
+"re": "253633-1",
+"nome": "BRUNO GABRIEL GIL FURTADO"
+},
+{
+"posto": "SD PM",
+"re": "253694-3",
+"nome": "BRENO DE OLIVEIRA FERNANDES"
+}
+]
