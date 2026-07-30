@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   AlertTriangle,
   CalendarClock,
   CheckCircle2,
   ClipboardList,
   FileDown,
+  LogIn,
+  LogOut,
   Search,
   Shield,
   Users,
@@ -35,6 +37,8 @@ import { StatusBadge } from "@/components/status-badge";
 import { EntregaDialog } from "@/components/entrega-dialog";
 import { FichaDialog } from "@/components/ficha-dialog";
 import { useControle } from "@/hooks/use-controle";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   formatarData,
   MATERIAIS,
@@ -66,6 +70,8 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { policiais, historico, registrarEntrega, removerEntrega } = useControle();
+  const { usuario } = useAuth();
+  const podeEditar = !!usuario;
   const [busca, setBusca] = useState("");
   const [posto, setPosto] = useState("todos");
   const [status, setStatus] = useState("todos");
