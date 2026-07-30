@@ -1,22 +1,18 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import * as XLSX from "xlsx";
 import {
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  Boxes,
-  CircleAlert,
-  FileSpreadsheet,
-  PackageX,
-  Pencil,
-  Plus,
+  AlertTriangle,
+  CalendarClock,
+  CheckCircle2,
+  ClipboardList,
+  FileDown,
   Search,
-  Trash2,
-  Wallet,
+  Shield,
+  Users,
 } from "lucide-react";
+import * as XLSX from "xlsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -24,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -34,25 +31,33 @@ import {
 } from "@/components/ui/table";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { MaterialDialog } from "@/components/material-dialog";
-import { MovimentoDialog } from "@/components/movimento-dialog";
-import { useEstoque } from "@/hooks/use-estoque";
-import { linhaParaMaterial, moeda, statusDo, type Material } from "@/lib/materiais";
+import { StatusBadge } from "@/components/status-badge";
+import { EntregaDialog } from "@/components/entrega-dialog";
+import { FichaDialog } from "@/components/ficha-dialog";
+import { useControle } from "@/hooks/use-controle";
+import {
+  formatarData,
+  MATERIAIS,
+  statusDe,
+  statusPolicial,
+  type MaterialTipo,
+  type Policial,
+} from "@/lib/controle";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Controle de Materiais | Estoque e Movimentações" },
+      { title: "Controle de Materiais 2026 | Efetivo e Validades" },
       {
         name: "description",
         content:
-          "Aplicativo de controle de materiais: consulte, filtre, cadastre e registre entradas e saídas de estoque a partir da sua planilha.",
+          "Controle de entrega de materiais do efetivo: fardamento, bota, boina, cinturão, coldre e mais, com validade, dias restantes e alertas de vencimento.",
       },
-      { property: "og:title", content: "Controle de Materiais" },
+      { property: "og:title", content: "Controle de Materiais 2026" },
       {
         property: "og:description",
         content:
-          "Consulte, cadastre e movimente materiais com alertas de estoque mínimo e importação de planilha.",
+          "Acompanhe entregas, validades e vencimentos de materiais por policial, com ficha individual e histórico.",
       },
     ],
   }),
@@ -60,55 +65,57 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { materiais, movimentos, salvarMaterial, removerMaterial, movimentar, importar } =
-    useEstoque();
+  const { policiais, historico, registrarEntrega, removerEntrega } = useControle();
   const [busca, setBusca] = useState("");
-  const [categoria, setCategoria] = useState("todas");
+  const [posto, setPosto] = useState("todos");
   const [status, setStatus] = useState("todos");
-  const [editando, setEditando] = useState<Material | null>(null);
-  const [dialogAberto, setDialogAberto] = useState(false);
-  const [movAlvo, setMovAlvo] = useState<Material | null>(null);
-  const [movTipo, setMovTipo] = useState<"entrada" | "saida">("entrada");
-  const inputArquivo = useRef<HTMLInputElement>(null);
+  const [ficha, setFicha] = useState<Policial | null>(null);
+  const [entregaAlvo, setEntregaAlvo] = useState<Policial | null>(null);
+  const [materialAlvo, setMaterialAlvo] = useState<MaterialTipo | undefined>();
 
-  const categorias = useMemo(
-    () => Array.from(new Set(materiais.map((m) => m.categoria).filter(Boolean))).sort(),
-    [materiais],
+  const postos = useMemo(
+    () => Array.from(new Set(policiais.map((p) => p.posto))).sort(),
+    [policiais],
   );
 
   const filtrados = useMemo(
     () =>
-      materiais.filter((m) => {
-        const alvo = `${m.codigo} ${m.nome} ${m.categoria} ${m.localizacao}`.toLowerCase();
+      policiais.filter((p) => {
+        const alvo = `${p.posto} ${p.re} ${p.nome}`.toLowerCase();
         if (busca && !alvo.includes(busca.toLowerCase())) return false;
-        if (categoria !== "todas" && m.categoria !== categoria) return false;
-        if (status !== "todos" && statusDo(m) !== status) return false;
+        if (posto !== "todos" && p.posto !== posto) return false;
+        if (status !== "todos" && statusPolicial(p) !== status) return false;
         return true;
       }),
-    [materiais, busca, categoria, status],
+    [policiais, busca, posto, status],
   );
 
-  const totalItens = materiais.reduce((s, m) => s + m.quantidade, 0);
-  const valorTotal = materiais.reduce((s, m) => s + m.quantidade * m.precoUnitario, 0);
-  const abaixoMinimo = materiais.filter((m) => statusDo(m) === "baixo").length;
-  const zerados = materiais.filter((m) => statusDo(m) === "zerado").length;
+  const itensEntregues = policiais.reduce((s, p) => s + Object.keys(p.itens).length, 0);
+  const vencidos = policiais.filter((p) => statusPolicial(p) === "VENCIDO").length;
+  const aVencer = policiais.filter((p) => statusPolicial(p) === "A VENCER").length;
 
-  async function aoImportar(file: File) {
-    try {
-      const wb = XLSX.read(await file.arrayBuffer());
-      const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(
-        wb.Sheets[wb.SheetNames[0]],
-      );
-      const novos = rows.map(linhaParaMaterial).filter(Boolean) as Material[];
-      if (!novos.length) {
-        toast.error("Nenhuma linha reconhecida na planilha.");
-        return;
+  const porMaterial = MATERIAIS.map((m) => {
+    const entregues = policiais.filter((p) => p.itens[m]).length;
+    const vencidosM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "VENCIDO").length;
+    const aVencerM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "A VENCER").length;
+    return { material: m, entregues, vencidosM, aVencerM };
+  });
+
+  function exportar() {
+    const linhas = policiais.map((p) => {
+      const base: Record<string, string> = { "Posto/Graduação": p.posto, RE: p.re, Nome: p.nome };
+      for (const m of MATERIAIS) {
+        base[`${m} Entrega`] = formatarData(p.itens[m]?.entrega);
+        base[`${m} Validade`] = formatarData(p.itens[m]?.validade);
+        base[`${m} Status`] = statusDe(p.itens[m]?.validade);
       }
-      importar(novos);
-      toast.success(`${novos.length} materiais importados da planilha.`);
-    } catch {
-      toast.error("Não foi possível ler o arquivo.");
-    }
+      return base;
+    });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(linhas), "Cadastro");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(historico), "Histórico");
+    XLSX.writeFile(wb, "CONTROLE_MATERIAIS_2026.xlsx");
+    toast.success("Planilha exportada.");
   }
 
   return (
@@ -118,260 +125,250 @@ function Index() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-sm bg-primary text-primary-foreground">
-              <Boxes className="size-5" />
+              <Shield className="size-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold leading-none">Controle de Materiais</h1>
-              <p className="label-industrial mt-1">Almoxarifado · Estoque operacional</p>
+              <h1 className="text-xl font-bold leading-none">Controle de Materiais 2026</h1>
+              <p className="label-industrial mt-1">Mendonça · Efetivo e validades</p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <input
-              ref={inputArquivo}
-              type="file"
-              accept=".xlsx,.xls,.csv"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void aoImportar(f);
-                e.target.value = "";
-              }}
-            />
-            <Button variant="outline" onClick={() => inputArquivo.current?.click()}>
-              <FileSpreadsheet /> Importar planilha
-            </Button>
-            <Button
-              onClick={() => {
-                setEditando(null);
-                setDialogAberto(true);
-              }}
-            >
-              <Plus /> Novo material
-            </Button>
-          </div>
+          <Button variant="outline" onClick={exportar}>
+            <FileDown /> Exportar planilha
+          </Button>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl space-y-6 px-6 py-8">
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Kpi icone={<Boxes className="size-4" />} rotulo="Itens em estoque" valor={totalItens.toLocaleString("pt-BR")} />
-          <Kpi icone={<Wallet className="size-4" />} rotulo="Valor total" valor={moeda(valorTotal)} />
+          <Kpi icone={<Users className="size-4" />} rotulo="Total de policiais" valor={String(policiais.length)} />
           <Kpi
-            icone={<CircleAlert className="size-4" />}
-            rotulo="Abaixo do mínimo"
-            valor={String(abaixoMinimo)}
+            icone={<CheckCircle2 className="size-4" />}
+            rotulo="Itens entregues"
+            valor={String(itensEntregues)}
+          />
+          <Kpi
+            icone={<CalendarClock className="size-4" />}
+            rotulo="A vencer (30 dias)"
+            valor={String(aVencer)}
             destaque="warning"
           />
           <Kpi
-            icone={<PackageX className="size-4" />}
-            rotulo="Zerados"
-            valor={String(zerados)}
+            icone={<AlertTriangle className="size-4" />}
+            rotulo="Com item vencido"
+            valor={String(vencidos)}
             destaque="destructive"
           />
         </section>
 
-        <section className="flex flex-wrap items-center gap-3">
-          <div className="relative min-w-64 flex-1">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              className="pl-9"
-              placeholder="Buscar por código, nome, categoria ou local..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-            />
-          </div>
-          <Select value={categoria} onValueChange={setCategoria}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todas">Todas as categorias</SelectItem>
-              {categorias.map((c) => (
-                <SelectItem key={c} value={c}>
-                  {c}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todos os status</SelectItem>
-              <SelectItem value="ok">Normal</SelectItem>
-              <SelectItem value="baixo">Abaixo do mínimo</SelectItem>
-              <SelectItem value="zerado">Zerado</SelectItem>
-            </SelectContent>
-          </Select>
-        </section>
+        <Tabs defaultValue="efetivo">
+          <TabsList>
+            <TabsTrigger value="efetivo">Efetivo</TabsTrigger>
+            <TabsTrigger value="materiais">Por material</TabsTrigger>
+            <TabsTrigger value="historico">Histórico</TabsTrigger>
+          </TabsList>
 
-        <section className="overflow-hidden rounded-md border border-border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="label-industrial">Código</TableHead>
-                <TableHead className="label-industrial">Material</TableHead>
-                <TableHead className="label-industrial">Categoria</TableHead>
-                <TableHead className="label-industrial">Local</TableHead>
-                <TableHead className="label-industrial text-right">Saldo</TableHead>
-                <TableHead className="label-industrial text-right">Mínimo</TableHead>
-                <TableHead className="label-industrial text-right">Valor</TableHead>
-                <TableHead className="label-industrial">Status</TableHead>
-                <TableHead className="label-industrial text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filtrados.map((m) => {
-                const s = statusDo(m);
-                return (
-                  <TableRow key={m.id}>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      {m.codigo}
-                    </TableCell>
-                    <TableCell className="font-medium">{m.nome}</TableCell>
-                    <TableCell className="text-muted-foreground">{m.categoria}</TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      {m.localizacao}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {m.quantidade} <span className="text-muted-foreground">{m.unidade}</span>
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums text-muted-foreground">
-                      {m.minimo}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {moeda(m.quantidade * m.precoUnitario)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={s === "ok" ? "outline" : s === "baixo" ? "secondary" : "destructive"}
-                        className={
-                          s === "baixo" ? "border-warning/40 text-warning" : undefined
-                        }
-                      >
-                        {s === "ok" ? "Normal" : s === "baixo" ? "Baixo" : "Zerado"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-1">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          title="Entrada"
-                          onClick={() => {
-                            setMovTipo("entrada");
-                            setMovAlvo(m);
-                          }}
-                        >
-                          <ArrowDownToLine className="size-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          title="Saída"
-                          onClick={() => {
-                            setMovTipo("saida");
-                            setMovAlvo(m);
-                          }}
-                        >
-                          <ArrowUpFromLine className="size-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          title="Editar"
-                          onClick={() => {
-                            setEditando(m);
-                            setDialogAberto(true);
-                          }}
-                        >
-                          <Pencil className="size-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          title="Excluir"
-                          onClick={() => {
-                            removerMaterial(m.id);
-                            toast.success("Material excluído.");
-                          }}
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+          <TabsContent value="efetivo" className="space-y-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="relative min-w-64 flex-1">
+                <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  className="pl-9"
+                  placeholder="Buscar por nome, RE ou posto..."
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
+                />
+              </div>
+              <Select value={posto} onValueChange={setPosto}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os postos</SelectItem>
+                  {postos.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={status} onValueChange={setStatus}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os status</SelectItem>
+                  <SelectItem value="VÁLIDO">Válido</SelectItem>
+                  <SelectItem value="A VENCER">A vencer</SelectItem>
+                  <SelectItem value="VENCIDO">Vencido</SelectItem>
+                  <SelectItem value="SEM ENTREGA">Sem entrega</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="overflow-hidden rounded-md border border-border bg-card">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="label-industrial">Posto</TableHead>
+                    <TableHead className="label-industrial">RE</TableHead>
+                    <TableHead className="label-industrial">Nome</TableHead>
+                    <TableHead className="label-industrial text-right">Itens</TableHead>
+                    <TableHead className="label-industrial">Situação</TableHead>
+                    <TableHead className="label-industrial text-right">Ações</TableHead>
                   </TableRow>
-                );
-              })}
-              {!filtrados.length && (
-                <TableRow>
-                  <TableCell colSpan={9} className="py-12 text-center text-muted-foreground">
-                    Nenhum material encontrado.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </section>
+                </TableHeader>
+                <TableBody>
+                  {filtrados.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell className="whitespace-nowrap font-mono text-xs text-muted-foreground">
+                        {p.posto}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {p.re}
+                      </TableCell>
+                      <TableCell className="font-medium">{p.nome}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {Object.keys(p.itens).length}/{MATERIAIS.length}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={statusPolicial(p)} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-end gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => setFicha(p)}>
+                            <ClipboardList className="size-4" /> Ficha
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => {
+                              setMaterialAlvo(undefined);
+                              setEntregaAlvo(p);
+                            }}
+                          >
+                            Entrega
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {!filtrados.length && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="py-12 text-center text-muted-foreground">
+                        Nenhum policial encontrado.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
 
-        <section className="rounded-md border border-border bg-card p-5">
-          <h2 className="text-sm font-bold">Últimas movimentações</h2>
-          <ul className="mt-4 space-y-2">
-            {movimentos.slice(0, 8).map((mv) => {
-              const mat = materiais.find((m) => m.id === mv.materialId);
-              return (
-                <li
-                  key={mv.id}
-                  className="flex items-center justify-between border-b border-border/60 pb-2 text-sm last:border-0"
-                >
-                  <span className="flex items-center gap-2">
-                    {mv.tipo === "entrada" ? (
-                      <ArrowDownToLine className="size-4 text-success" />
-                    ) : (
-                      <ArrowUpFromLine className="size-4 text-destructive" />
-                    )}
-                    <span className="font-medium">{mat?.nome ?? "Material removido"}</span>
-                    <span className="text-muted-foreground">
-                      {mv.tipo === "entrada" ? "+" : "−"}
-                      {mv.quantidade} {mat?.unidade}
-                    </span>
-                    {mv.observacao && (
-                      <span className="text-muted-foreground">· {mv.observacao}</span>
-                    )}
-                  </span>
-                  <span className="font-mono text-xs text-muted-foreground">
-                    {new Date(mv.data).toLocaleString("pt-BR")}
-                  </span>
-                </li>
-              );
-            })}
-            {!movimentos.length && (
-              <li className="text-sm text-muted-foreground">
-                Nenhuma movimentação registrada ainda.
-              </li>
-            )}
-          </ul>
-        </section>
+          <TabsContent value="materiais">
+            <div className="overflow-hidden rounded-md border border-border bg-card">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="label-industrial">Material</TableHead>
+                    <TableHead className="label-industrial text-right">Entregues</TableHead>
+                    <TableHead className="label-industrial text-right">Pendentes</TableHead>
+                    <TableHead className="label-industrial text-right">A vencer</TableHead>
+                    <TableHead className="label-industrial text-right">Vencidos</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {porMaterial.map((r) => (
+                    <TableRow key={r.material}>
+                      <TableCell className="font-medium">{r.material}</TableCell>
+                      <TableCell className="text-right tabular-nums">{r.entregues}</TableCell>
+                      <TableCell className="text-right tabular-nums text-muted-foreground">
+                        {policiais.length - r.entregues}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums text-warning">
+                        {r.aVencerM}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums text-destructive">
+                        {r.vencidosM}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="historico">
+            <div className="overflow-hidden rounded-md border border-border bg-card">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="label-industrial">Data</TableHead>
+                    <TableHead className="label-industrial">RE</TableHead>
+                    <TableHead className="label-industrial">Nome</TableHead>
+                    <TableHead className="label-industrial">Material</TableHead>
+                    <TableHead className="label-industrial">Entrega</TableHead>
+                    <TableHead className="label-industrial">Validade</TableHead>
+                    <TableHead className="label-industrial">Responsável</TableHead>
+                    <TableHead className="label-industrial">Observações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {historico.map((h) => (
+                    <TableRow key={h.id}>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {new Date(h.data).toLocaleDateString("pt-BR")}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {h.re}
+                      </TableCell>
+                      <TableCell className="font-medium">{h.nome}</TableCell>
+                      <TableCell>{h.material}</TableCell>
+                      <TableCell>{formatarData(h.entrega)}</TableCell>
+                      <TableCell>{formatarData(h.validade)}</TableCell>
+                      <TableCell className="text-muted-foreground">{h.responsavel || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground">{h.observacoes || "—"}</TableCell>
+                    </TableRow>
+                  ))}
+                  {!historico.length && (
+                    <TableRow>
+                      <TableCell colSpan={8} className="py-12 text-center text-muted-foreground">
+                        Nenhuma entrega registrada ainda.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
 
-      <MaterialDialog
-        aberto={dialogAberto}
-        material={editando}
-        onFechar={() => setDialogAberto(false)}
-        onSalvar={(m) => {
-          salvarMaterial(m);
-          toast.success("Material salvo.");
+      <FichaDialog
+        policial={ficha}
+        onFechar={() => setFicha(null)}
+        onRegistrar={(m) => {
+          setMaterialAlvo(m);
+          setEntregaAlvo(ficha);
+        }}
+        onRemover={(m) => {
+          if (ficha) {
+            removerEntrega(ficha.id, m);
+            setFicha({ ...ficha, itens: { ...ficha.itens, [m]: undefined } });
+            toast.success("Registro removido.");
+          }
         }}
       />
-      <MovimentoDialog
-        material={movAlvo}
-        tipo={movTipo}
-        onFechar={() => setMovAlvo(null)}
-        onConfirmar={(q, obs) => {
-          if (movAlvo) {
-            movimentar(movAlvo.id, movTipo, q, obs);
-            toast.success(movTipo === "entrada" ? "Entrada registrada." : "Saída registrada.");
+      <EntregaDialog
+        policial={entregaAlvo}
+        materialInicial={materialAlvo}
+        onFechar={() => setEntregaAlvo(null)}
+        onSalvar={(material, dados) => {
+          if (entregaAlvo) {
+            registrarEntrega(entregaAlvo.id, material, dados);
+            setFicha((f) =>
+              f && f.id === entregaAlvo.id ? { ...f, itens: { ...f.itens, [material]: dados } } : f,
+            );
+            toast.success(`${material} registrado para ${entregaAlvo.nome}.`);
           }
         }}
       />
