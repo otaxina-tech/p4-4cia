@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { Shield } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,11 @@ export const Route = createFileRoute("/auth")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  ssr: false,
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getUser();
+    if (data.user) throw redirect({ to: "/painel" });
+  },
   component: AuthPage,
 });
 
@@ -43,7 +48,7 @@ function AuthPage() {
     setCarregando(false);
     if (error) return toast.error("E-mail ou senha inválidos.");
     toast.success("Acesso liberado.");
-    navigate({ to: "/" });
+    navigate({ to: "/painel", replace: true });
   }
 
   async function cadastrar(e: React.FormEvent) {
@@ -60,7 +65,7 @@ function AuthPage() {
       return toast.success("Conta criada. Confirme o e-mail para poder editar.");
     }
     toast.success("Conta criada e acesso liberado.");
-    navigate({ to: "/" });
+    navigate({ to: "/painel", replace: true });
   }
 
   return (
@@ -118,9 +123,6 @@ function AuthPage() {
           </TabsContent>
         </Tabs>
 
-        <Link to="/" className="block text-center text-sm text-muted-foreground hover:text-primary">
-          Voltar para a consulta
-        </Link>
       </div>
     </div>
   );
