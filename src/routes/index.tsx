@@ -138,9 +138,28 @@ function Index() {
               <p className="label-industrial mt-1">9ºB.C - 4ª CIA</p>
             </div>
           </div>
-          <Button variant="outline" onClick={exportar}>
-            <FileDown /> Exportar planilha
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" onClick={exportar}>
+              <FileDown /> Exportar planilha
+            </Button>
+            {podeEditar ? (
+              <Button
+                variant="ghost"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  toast.success("Sessão encerrada.");
+                }}
+              >
+                <LogOut /> Sair
+              </Button>
+            ) : (
+              <Button asChild>
+                <Link to="/auth">
+                  <LogIn /> Entrar para editar
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
