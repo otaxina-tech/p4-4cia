@@ -48,7 +48,7 @@ import {
   type Policial,
 } from "@/lib/controle";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
     meta: [
       { title: "CONTROLE DE MATERIAIS | 9ºB.C - 4ª CIA" },
