@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   AlertTriangle,
   CalendarClock,
   CheckCircle2,
   ClipboardList,
   FileDown,
+  LogIn,
+  LogOut,
   Search,
   Shield,
   Users,
@@ -35,6 +37,8 @@ import { StatusBadge } from "@/components/status-badge";
 import { EntregaDialog } from "@/components/entrega-dialog";
 import { FichaDialog } from "@/components/ficha-dialog";
 import { useControle } from "@/hooks/use-controle";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   formatarData,
   MATERIAIS,
@@ -66,6 +70,8 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { policiais, historico, registrarEntrega, removerEntrega } = useControle();
+  const { usuario } = useAuth();
+  const podeEditar = !!usuario;
   const [busca, setBusca] = useState("");
   const [posto, setPosto] = useState("todos");
   const [status, setStatus] = useState("todos");
@@ -132,9 +138,28 @@ function Index() {
               <p className="label-industrial mt-1">9ºB.C - 4ª CIA</p>
             </div>
           </div>
-          <Button variant="outline" onClick={exportar}>
-            <FileDown /> Exportar planilha
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" onClick={exportar}>
+              <FileDown /> Exportar planilha
+            </Button>
+            {podeEditar ? (
+              <Button
+                variant="ghost"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  toast.success("Sessão encerrada.");
+                }}
+              >
+                <LogOut /> Sair
+              </Button>
+            ) : (
+              <Button asChild>
+                <Link to="/auth">
+                  <LogIn /> Entrar para editar
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -238,16 +263,18 @@ function Index() {
                           <Button size="sm" variant="ghost" onClick={() => setFicha(p)}>
                             <ClipboardList className="size-4" /> Ficha
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => {
-                              setMaterialAlvo(undefined);
-                              setEntregaAlvo(p);
-                            }}
-                          >
-                            Entrega
-                          </Button>
+                          {podeEditar && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => {
+                                setMaterialAlvo(undefined);
+                                setEntregaAlvo(p);
+                              }}
+                            >
+                              Entrega
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -345,16 +372,20 @@ function Index() {
 
       <FichaDialog
         policial={ficha}
+        podeEditar={podeEditar}
         onFechar={() => setFicha(null)}
         onRegistrar={(m) => {
           setMaterialAlvo(m);
           setEntregaAlvo(ficha);
         }}
-        onRemover={(m) => {
-          if (ficha) {
-            removerEntrega(ficha.id, m);
+        onRemover={async (m) => {
+          if (!ficha) return;
+          try {
+            await removerEntrega(ficha.re, m);
             setFicha({ ...ficha, itens: { ...ficha.itens, [m]: undefined } });
             toast.success("Registro removido.");
+          } catch {
+            toast.error("Não foi possível remover. Faça login novamente.");
           }
         }}
       />
@@ -362,13 +393,16 @@ function Index() {
         policial={entregaAlvo}
         materialInicial={materialAlvo}
         onFechar={() => setEntregaAlvo(null)}
-        onSalvar={(material, dados) => {
-          if (entregaAlvo) {
-            registrarEntrega(entregaAlvo.id, material, dados);
+        onSalvar={async (material, dados) => {
+          if (!entregaAlvo) return;
+          try {
+            await registrarEntrega(entregaAlvo, material, dados);
             setFicha((f) =>
               f && f.id === entregaAlvo.id ? { ...f, itens: { ...f.itens, [material]: dados } } : f,
             );
             toast.success(`${material} registrado para ${entregaAlvo.nome}.`);
+          } catch {
+            toast.error("Não foi possível salvar. Faça login novamente.");
           }
         }}
       />
