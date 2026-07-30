@@ -66,13 +66,17 @@ export function FichaDialog({
                         </Badge>
                       )}
                       <StatusBadge status={statusDe(item?.validade)} />
-                      <Button size="sm" variant="secondary" onClick={() => onRegistrar(m)}>
-                        {item ? "Atualizar" : "Registrar"}
-                      </Button>
-                      {item && (
-                        <Button size="sm" variant="ghost" onClick={() => onRemover(m)}>
-                          Limpar
-                        </Button>
+                      {podeEditar && (
+                        <>
+                          <Button size="sm" variant="secondary" onClick={() => onRegistrar(m)}>
+                            {item ? "Atualizar" : "Registrar"}
+                          </Button>
+                          {item && (
+                            <Button size="sm" variant="ghost" onClick={() => onRemover(m)}>
+                              Limpar
+                            </Button>
+                          )}
+                        </>
                       )}
                     </div>
                   </li>
