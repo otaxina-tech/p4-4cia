@@ -47,13 +47,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Controle de Materiais 2026 | Efetivo e Validades" },
+      { title: "CONTROLE DE MATERIAIS | 9ºB.C - 4ª CIA" },
       {
         name: "description",
         content:
           "Controle de entrega de materiais do efetivo: fardamento, bota, boina, cinturão, coldre e mais, com validade, dias restantes e alertas de vencimento.",
       },
-      { property: "og:title", content: "Controle de Materiais 2026" },
+      { property: "og:title", content: "CONTROLE DE MATERIAIS" },
       {
         property: "og:description",
         content:
@@ -128,8 +128,8 @@ function Index() {
               <Shield className="size-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold leading-none">Controle de Materiais 2026</h1>
-              <p className="label-industrial mt-1">Mendonça · Efetivo e validades</p>
+              <h1 className="text-xl font-bold leading-none">CONTROLE DE MATERIAIS&nbsp;</h1>
+              <p className="label-industrial mt-1">9ºB.C - 4ª CIA</p>
             </div>
           </div>
           <Button variant="outline" onClick={exportar}>
