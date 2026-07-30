@@ -8,7 +8,7 @@ import {
   FileDown,
   LogOut,
   Search,
-  Shield,
+  Users,
   Users,
 } from "lucide-react";
 import * as XLSX from "xlsx";
