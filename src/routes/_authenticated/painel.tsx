@@ -9,9 +9,9 @@ import {
   LogOut,
   Search,
   Users,
-  Users,
 } from "lucide-react";
 import * as XLSX from "xlsx";
+import brasao from "@/assets/brasao.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
