@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import brasaoAsset from "@/assets/brasao-9bc.png.asset.json";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,7 +70,7 @@ function AuthPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-12">
       <img
-        src={brasaoAsset.url}
+        src="/brasao-9bc.png"
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-1/2 w-[min(120vw,720px)] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.07] blur-[1px]"
@@ -80,7 +79,7 @@ function AuthPage() {
       <div className="relative w-full max-w-md space-y-6 rounded-md border border-border bg-card/95 p-8 backdrop-blur">
         <div className="flex items-center gap-3">
           <img
-            src={brasaoAsset.url}
+            src="/brasao-9bc.png"
             alt="Brasão do 9ºB.C - 4ª CIA"
             className="size-10 shrink-0 object-contain"
           />
