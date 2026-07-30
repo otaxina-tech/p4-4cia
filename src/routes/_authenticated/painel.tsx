@@ -130,9 +130,13 @@ function Index() {
       <header className="border-b border-border bg-card/70 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-sm bg-primary text-primary-foreground">
-              <Shield className="size-5" />
-            </div>
+            <img
+              src={brasao}
+              alt="Brasão do 9ºB.C - 4ª CIA"
+              width={1024}
+              height={1024}
+              className="size-10 shrink-0 object-contain"
+            />
             <div>
               <h1 className="text-xl font-bold leading-none">CONTROLE DE MATERIAIS&nbsp;</h1>
               <p className="label-industrial mt-1">9ºB.C - 4ª CIA</p>

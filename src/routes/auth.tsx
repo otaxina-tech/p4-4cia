@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { Shield } from "lucide-react";
+import brasao from "@/assets/brasao.png";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
