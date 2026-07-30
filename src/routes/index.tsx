@@ -263,16 +263,18 @@ function Index() {
                           <Button size="sm" variant="ghost" onClick={() => setFicha(p)}>
                             <ClipboardList className="size-4" /> Ficha
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => {
-                              setMaterialAlvo(undefined);
-                              setEntregaAlvo(p);
-                            }}
-                          >
-                            Entrega
-                          </Button>
+                          {podeEditar && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => {
+                                setMaterialAlvo(undefined);
+                                setEntregaAlvo(p);
+                              }}
+                            >
+                              Entrega
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -370,16 +372,20 @@ function Index() {
 
       <FichaDialog
         policial={ficha}
+        podeEditar={podeEditar}
         onFechar={() => setFicha(null)}
         onRegistrar={(m) => {
           setMaterialAlvo(m);
           setEntregaAlvo(ficha);
         }}
-        onRemover={(m) => {
-          if (ficha) {
-            removerEntrega(ficha.id, m);
+        onRemover={async (m) => {
+          if (!ficha) return;
+          try {
+            await removerEntrega(ficha.re, m);
             setFicha({ ...ficha, itens: { ...ficha.itens, [m]: undefined } });
             toast.success("Registro removido.");
+          } catch {
+            toast.error("Não foi possível remover. Faça login novamente.");
           }
         }}
       />
@@ -387,13 +393,16 @@ function Index() {
         policial={entregaAlvo}
         materialInicial={materialAlvo}
         onFechar={() => setEntregaAlvo(null)}
-        onSalvar={(material, dados) => {
-          if (entregaAlvo) {
-            registrarEntrega(entregaAlvo.id, material, dados);
+        onSalvar={async (material, dados) => {
+          if (!entregaAlvo) return;
+          try {
+            await registrarEntrega(entregaAlvo, material, dados);
             setFicha((f) =>
               f && f.id === entregaAlvo.id ? { ...f, itens: { ...f.itens, [material]: dados } } : f,
             );
             toast.success(`${material} registrado para ${entregaAlvo.nome}.`);
+          } catch {
+            toast.error("Não foi possível salvar. Faça login novamente.");
           }
         }}
       />

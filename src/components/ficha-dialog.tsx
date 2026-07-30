@@ -18,11 +18,13 @@ import { StatusBadge } from "@/components/status-badge";
 
 export function FichaDialog({
   policial,
+  podeEditar,
   onFechar,
   onRegistrar,
   onRemover,
 }: {
   policial: Policial | null;
+  podeEditar: boolean;
   onFechar: () => void;
   onRegistrar: (material: MaterialTipo) => void;
   onRemover: (material: MaterialTipo) => void;
