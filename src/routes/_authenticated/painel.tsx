@@ -71,7 +71,17 @@ export const Route = createFileRoute("/_authenticated/painel")({
 });
 
 function Index() {
-  const { policiais, historico, registrarEntrega, removerEntrega } = useControle();
+  const {
+    policiais,
+    materiais,
+    historico,
+    registrarEntrega,
+    removerEntrega,
+    adicionarPolicial,
+    removerPolicial,
+    adicionarMaterial,
+    removerMaterial,
+  } = useControle();
   const { perfil, admin, aprovado, carregando: carregandoAcesso } = useAcesso();
   const sair = useSair();
   const podeEditar = aprovado;
@@ -81,6 +91,8 @@ function Index() {
   const [ficha, setFicha] = useState<Policial | null>(null);
   const [entregaAlvo, setEntregaAlvo] = useState<Policial | null>(null);
   const [materialAlvo, setMaterialAlvo] = useState<MaterialTipo | undefined>();
+  const [novoPolicial, setNovoPolicial] = useState(false);
+  const [novoMaterial, setNovoMaterial] = useState("");
 
   const postos = useMemo(
     () => Array.from(new Set(policiais.map((p) => p.posto))).sort(),
@@ -103,17 +115,59 @@ function Index() {
   const vencidos = policiais.filter((p) => statusPolicial(p) === "VENCIDO").length;
   const aVencer = policiais.filter((p) => statusPolicial(p) === "A VENCER").length;
 
-  const porMaterial = MATERIAIS.map((m) => {
+  const porMaterial = materiais.map((m) => {
     const entregues = policiais.filter((p) => p.itens[m]).length;
     const vencidosM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "VENCIDO").length;
     const aVencerM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "A VENCER").length;
     return { material: m, entregues, vencidosM, aVencerM };
   });
 
+  async function criarPolicial(dados: { re: string; nome: string; posto: string }) {
+    try {
+      await adicionarPolicial(dados);
+      toast.success(`${dados.nome} adicionado ao efetivo.`);
+    } catch {
+      toast.error("Não foi possível adicionar. Verifique se o RE já existe.");
+    }
+  }
+
+  async function excluirPolicial(p: Policial) {
+    if (!window.confirm(`Remover ${p.nome} (RE ${p.re}) e suas entregas?`)) return;
+    try {
+      await removerPolicial(p.re);
+      toast.success("Policial removido.");
+    } catch {
+      toast.error("Não foi possível remover.");
+    }
+  }
+
+  async function criarMaterial() {
+    const nome = novoMaterial.trim();
+    if (!nome) return;
+    try {
+      await adicionarMaterial(nome);
+      setNovoMaterial("");
+      toast.success(`Material "${nome}" adicionado.`);
+    } catch {
+      toast.error("Não foi possível adicionar. Esse material já existe?");
+    }
+  }
+
+  async function excluirMaterial(nome: string) {
+    if (!window.confirm(`Remover o material "${nome}" e todas as suas entregas?`)) return;
+    try {
+      await removerMaterial(nome);
+      toast.success("Material removido.");
+    } catch {
+      toast.error("Não foi possível remover.");
+    }
+  }
+
   function exportar() {
     const linhas = policiais.map((p) => {
       const base: Record<string, string> = { "Posto/Graduação": p.posto, RE: p.re, Nome: p.nome };
-      for (const m of MATERIAIS) {
+      for (const m of materiais) {
+
         base[`${m} Entrega`] = formatarData(p.itens[m]?.entrega);
         base[`${m} Validade`] = formatarData(p.itens[m]?.validade);
         base[`${m} Status`] = statusDe(p.itens[m]?.validade);
