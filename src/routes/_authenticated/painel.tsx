@@ -68,9 +68,9 @@ export const Route = createFileRoute("/_authenticated/painel")({
 
 function Index() {
   const { policiais, historico, registrarEntrega, removerEntrega } = useControle();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const podeEditar = true;
+  const { perfil, admin, aprovado, carregando: carregandoAcesso } = useAcesso();
+  const sair = useSair();
+  const podeEditar = aprovado;
   const [busca, setBusca] = useState("");
   const [posto, setPosto] = useState("todos");
   const [status, setStatus] = useState("todos");
