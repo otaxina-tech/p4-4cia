@@ -126,6 +126,7 @@ function Index() {
     adicionarMaterial,
     removerMaterial,
   } = useControle();
+  const { recibos, criarRecibo, removerRecibo } = useRecibos();
   const { perfil, admin, aprovado, carregando: carregandoAcesso } = useAcesso();
   const sair = useSair();
   const podeEditar = aprovado;
@@ -135,6 +136,9 @@ function Index() {
   const [ficha, setFicha] = useState<Policial | null>(null);
   const [entregaAlvo, setEntregaAlvo] = useState<Policial | null>(null);
   const [materialAlvo, setMaterialAlvo] = useState<MaterialTipo | undefined>();
+  const [novoRecibo, setNovoRecibo] = useState(false);
+  const [reciboAlvo, setReciboAlvo] = useState<string | undefined>();
+  const [reciboVisto, setReciboVisto] = useState<Recibo | null>(null);
   const [novoPolicial, setNovoPolicial] = useState(false);
   const [novoMaterial, setNovoMaterial] = useState("");
   const [ordemEfetivo, setOrdemEfetivo] = useState<Ordenacao<ColunaEfetivo>>({
