@@ -8,7 +8,9 @@ import {
   Users2,
   FileDown,
   LogOut,
+  Plus,
   Search,
+  Trash2,
   Users,
 } from "lucide-react";
 import * as XLSX from "xlsx";
@@ -35,17 +37,18 @@ import { toast } from "sonner";
 import { StatusBadge } from "@/components/status-badge";
 import { EntregaDialog } from "@/components/entrega-dialog";
 import { FichaDialog } from "@/components/ficha-dialog";
+import { PolicialDialog } from "@/components/policial-dialog";
 import { useControle } from "@/hooks/use-controle";
 import { useAcesso } from "@/hooks/use-acesso";
 import { AguardandoAprovacao, useSair } from "@/components/acesso-gate";
 import {
   formatarData,
-  MATERIAIS,
   statusDe,
   statusPolicial,
   type MaterialTipo,
   type Policial,
 } from "@/lib/controle";
+
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
