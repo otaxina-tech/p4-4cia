@@ -1,13 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  efetivoInicial,
-  type Entrega,
-  type MaterialTipo,
-  type Policial,
-  type Registro,
-} from "@/lib/controle";
+import { useCadastros } from "@/hooks/use-cadastros";
+import { type Entrega, type MaterialTipo, type Policial, type Registro } from "@/lib/controle";
 
 type LinhaEntrega = {
   id: string;
@@ -41,25 +36,29 @@ async function buscarHistorico(): Promise<Registro[]> {
 
 export function useControle() {
   const queryClient = useQueryClient();
+  const cadastros = useCadastros();
+  const { policiaisCadastro, materiais } = cadastros;
 
   const entregasQuery = useQuery({ queryKey: ["entregas"], queryFn: buscarEntregas });
   const historicoQuery = useQuery({ queryKey: ["historico"], queryFn: buscarHistorico });
 
   const policiais = useMemo<Policial[]>(() => {
     const linhas = entregasQuery.data ?? [];
-    return efetivoInicial.map((p) => {
+    const validos = new Set(materiais);
+    return policiaisCadastro.map((p) => {
       const itens: Partial<Record<MaterialTipo, Entrega>> = {};
       for (const l of linhas.filter((l) => l.re === p.re)) {
-        itens[l.material as MaterialTipo] = {
+        if (!validos.has(l.material)) continue;
+        itens[l.material] = {
           entrega: l.entrega,
           validade: l.validade,
           responsavel: l.responsavel,
           observacoes: l.observacoes,
         };
       }
-      return { ...p, itens };
+      return { id: p.id, posto: p.posto, re: p.re, nome: p.nome, itens };
     });
-  }, [entregasQuery.data]);
+  }, [entregasQuery.data, policiaisCadastro, materiais]);
 
   const invalidar = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["entregas"] });
@@ -127,9 +126,14 @@ export function useControle() {
 
   return {
     policiais,
+    materiais,
     historico: historicoQuery.data ?? [],
-    carregando: entregasQuery.isLoading || historicoQuery.isLoading,
+    carregando: entregasQuery.isLoading || historicoQuery.isLoading || cadastros.carregando,
     registrarEntrega,
     removerEntrega,
+    adicionarPolicial: cadastros.adicionarPolicial,
+    removerPolicial: cadastros.removerPolicial,
+    adicionarMaterial: cadastros.adicionarMaterial,
+    removerMaterial: cadastros.removerMaterial,
   };
 }
