@@ -92,6 +92,60 @@ export type Database = {
         }
         Relationships: []
       }
+      materiais: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          ordem?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      policiais: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          posto: string
+          re: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          ordem?: number
+          posto?: string
+          re: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          posto?: string
+          re?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
