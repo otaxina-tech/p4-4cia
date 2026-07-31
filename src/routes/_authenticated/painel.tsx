@@ -343,6 +343,7 @@ function Index() {
           <TabsList>
             <TabsTrigger value="efetivo">Efetivo</TabsTrigger>
             <TabsTrigger value="materiais">Por material</TabsTrigger>
+            <TabsTrigger value="recibos">Recibos</TabsTrigger>
             <TabsTrigger value="historico">Histórico</TabsTrigger>
           </TabsList>
 
