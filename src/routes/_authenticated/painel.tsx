@@ -481,7 +481,9 @@ function Index() {
 
       <FichaDialog
         policial={ficha}
+        materiais={materiais}
         podeEditar={podeEditar}
+
         onFechar={() => setFicha(null)}
         onRegistrar={(m) => {
           setMaterialAlvo(m);
