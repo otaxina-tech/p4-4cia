@@ -9,7 +9,6 @@ import {
 import {
   diasRestantes,
   formatarData,
-  MATERIAIS,
   statusDe,
   type MaterialTipo,
   type Policial,
@@ -18,12 +17,14 @@ import { StatusBadge } from "@/components/status-badge";
 
 export function FichaDialog({
   policial,
+  materiais,
   podeEditar,
   onFechar,
   onRegistrar,
   onRemover,
 }: {
   policial: Policial | null;
+  materiais: MaterialTipo[];
   podeEditar: boolean;
   onFechar: () => void;
   onRegistrar: (material: MaterialTipo) => void;
@@ -43,7 +44,8 @@ export function FichaDialog({
               <Info rotulo="Nome" valor={policial.nome} />
             </div>
             <ul className="space-y-2">
-              {MATERIAIS.map((m) => {
+              {materiais.map((m) => {
+
                 const item = policial.itens[m];
                 const dias = diasRestantes(item?.validade);
                 return (
