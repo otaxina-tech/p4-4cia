@@ -520,7 +520,13 @@ function Index() {
           }
         }}
       />
+      <PolicialDialog
+        aberto={novoPolicial}
+        onFechar={() => setNovoPolicial(false)}
+        onSalvar={criarPolicial}
+      />
     </div>
+
   );
 }
 
