@@ -1,6 +1,4 @@
-import efetivo from "@/data/efetivo.json";
-
-export const MATERIAIS = [
+export const MATERIAIS_PADRAO = [
   "Fardamento",
   "Bota",
   "Boina",
@@ -12,7 +10,8 @@ export const MATERIAIS = [
   "Adicional 2",
 ] as const;
 
-export type MaterialTipo = (typeof MATERIAIS)[number];
+/** Os tipos de material são cadastráveis, por isso o tipo é aberto. */
+export type MaterialTipo = string;
 
 export type Entrega = {
   entrega: string; // ISO date
@@ -43,13 +42,7 @@ export type Registro = {
 
 export type StatusItem = "VÁLIDO" | "A VENCER" | "VENCIDO" | "SEM ENTREGA";
 
-export const STORAGE_KEY = "controle-materiais-pm-v1";
-
 export const uid = () => Math.random().toString(36).slice(2, 10);
-
-export const efetivoInicial: Policial[] = (
-  efetivo as { posto: string; re: string; nome: string }[]
-).map((p) => ({ id: p.re || uid(), posto: p.posto, re: p.re, nome: p.nome, itens: {} }));
 
 export function diasRestantes(validade?: string): number | null {
   if (!validade) return null;
@@ -68,9 +61,10 @@ export function statusDe(validade?: string): StatusItem {
 }
 
 export function statusPolicial(p: Policial): StatusItem {
-  const status = MATERIAIS.map((m) => statusDe(p.itens[m]?.validade)).filter(
-    (s) => s !== "SEM ENTREGA",
-  );
+  const status = Object.values(p.itens)
+    .filter(Boolean)
+    .map((i) => statusDe(i?.validade))
+    .filter((s) => s !== "SEM ENTREGA");
   if (!status.length) return "SEM ENTREGA";
   if (status.includes("VENCIDO")) return "VENCIDO";
   if (status.includes("A VENCER")) return "A VENCER";
