@@ -132,34 +132,84 @@ function Index() {
   const [materialAlvo, setMaterialAlvo] = useState<MaterialTipo | undefined>();
   const [novoPolicial, setNovoPolicial] = useState(false);
   const [novoMaterial, setNovoMaterial] = useState("");
+  const [ordemEfetivo, setOrdemEfetivo] = useState<Ordenacao<ColunaEfetivo>>({
+    coluna: "posto",
+    direcao: "asc",
+  });
+  const [ordemMaterial, setOrdemMaterial] = useState<Ordenacao<ColunaMaterial>>({
+    coluna: "material",
+    direcao: "asc",
+  });
+
+  const alternar = <C extends string>(
+    set: React.Dispatch<React.SetStateAction<Ordenacao<C>>>,
+    coluna: C,
+  ) =>
+    set((o) =>
+      o.coluna === coluna
+        ? { coluna, direcao: o.direcao === "asc" ? "desc" : "asc" }
+        : { coluna, direcao: "asc" },
+    );
 
   const postos = useMemo(
-    () => Array.from(new Set(policiais.map((p) => p.posto))).sort(),
+    () =>
+      Array.from(new Set(policiais.map((p) => p.posto))).sort(
+        (a, b) => ordemPosto(a) - ordemPosto(b) || a.localeCompare(b, "pt-BR"),
+      ),
     [policiais],
   );
 
-  const filtrados = useMemo(
-    () =>
-      policiais.filter((p) => {
-        const alvo = `${p.posto} ${p.re} ${p.nome}`.toLowerCase();
-        if (busca && !alvo.includes(busca.toLowerCase())) return false;
-        if (posto !== "todos" && p.posto !== posto) return false;
-        if (status !== "todos" && statusPolicial(p) !== status) return false;
-        return true;
-      }),
-    [policiais, busca, posto, status],
-  );
+  const filtrados = useMemo(() => {
+    const lista = policiais.filter((p) => {
+      const alvo = `${p.posto} ${p.re} ${p.nome}`.toLowerCase();
+      if (busca && !alvo.includes(busca.toLowerCase())) return false;
+      if (posto !== "todos" && p.posto !== posto) return false;
+      if (status !== "todos" && statusPolicial(p) !== status) return false;
+      return true;
+    });
+    const sinal = ordemEfetivo.direcao === "asc" ? 1 : -1;
+    return [...lista].sort((a, b) => {
+      let d = 0;
+      switch (ordemEfetivo.coluna) {
+        case "posto":
+          d = ordemPosto(a.posto) - ordemPosto(b.posto) || a.nome.localeCompare(b.nome, "pt-BR");
+          break;
+        case "re":
+          d = a.re.localeCompare(b.re, "pt-BR", { numeric: true });
+          break;
+        case "nome":
+          d = a.nome.localeCompare(b.nome, "pt-BR");
+          break;
+        case "itens":
+          d = Object.keys(a.itens).length - Object.keys(b.itens).length;
+          break;
+        case "situacao":
+          d = ORDEM_STATUS[statusPolicial(a)] - ORDEM_STATUS[statusPolicial(b)];
+          break;
+      }
+      return d * sinal;
+    });
+  }, [policiais, busca, posto, status, ordemEfetivo]);
 
   const itensEntregues = policiais.reduce((s, p) => s + Object.keys(p.itens).length, 0);
   const vencidos = policiais.filter((p) => statusPolicial(p) === "VENCIDO").length;
   const aVencer = policiais.filter((p) => statusPolicial(p) === "A VENCER").length;
 
-  const porMaterial = materiais.map((m) => {
-    const entregues = policiais.filter((p) => p.itens[m]).length;
-    const vencidosM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "VENCIDO").length;
-    const aVencerM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "A VENCER").length;
-    return { material: m, entregues, vencidosM, aVencerM };
-  });
+  const porMaterial = useMemo(() => {
+    const linhas = materiais.map((m) => {
+      const entregues = policiais.filter((p) => p.itens[m]).length;
+      const vencidosM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "VENCIDO").length;
+      const aVencerM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "A VENCER").length;
+      return { material: m, entregues, pendentes: policiais.length - entregues, vencidosM, aVencerM };
+    });
+    const sinal = ordemMaterial.direcao === "asc" ? 1 : -1;
+    return linhas.sort((a, b) => {
+      const c = ordemMaterial.coluna;
+      const d =
+        c === "material" ? a.material.localeCompare(b.material, "pt-BR") : a[c] - b[c];
+      return d * sinal;
+    });
+  }, [materiais, policiais, ordemMaterial]);
 
   async function criarPolicial(dados: { re: string; nome: string; posto: string }) {
     try {
