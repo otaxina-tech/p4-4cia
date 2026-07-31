@@ -8,7 +8,9 @@ import {
   Users2,
   FileDown,
   LogOut,
+  Plus,
   Search,
+  Trash2,
   Users,
 } from "lucide-react";
 import * as XLSX from "xlsx";
@@ -35,17 +37,18 @@ import { toast } from "sonner";
 import { StatusBadge } from "@/components/status-badge";
 import { EntregaDialog } from "@/components/entrega-dialog";
 import { FichaDialog } from "@/components/ficha-dialog";
+import { PolicialDialog } from "@/components/policial-dialog";
 import { useControle } from "@/hooks/use-controle";
 import { useAcesso } from "@/hooks/use-acesso";
 import { AguardandoAprovacao, useSair } from "@/components/acesso-gate";
 import {
   formatarData,
-  MATERIAIS,
   statusDe,
   statusPolicial,
   type MaterialTipo,
   type Policial,
 } from "@/lib/controle";
+
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
@@ -68,7 +71,17 @@ export const Route = createFileRoute("/_authenticated/painel")({
 });
 
 function Index() {
-  const { policiais, historico, registrarEntrega, removerEntrega } = useControle();
+  const {
+    policiais,
+    materiais,
+    historico,
+    registrarEntrega,
+    removerEntrega,
+    adicionarPolicial,
+    removerPolicial,
+    adicionarMaterial,
+    removerMaterial,
+  } = useControle();
   const { perfil, admin, aprovado, carregando: carregandoAcesso } = useAcesso();
   const sair = useSair();
   const podeEditar = aprovado;
@@ -78,6 +91,8 @@ function Index() {
   const [ficha, setFicha] = useState<Policial | null>(null);
   const [entregaAlvo, setEntregaAlvo] = useState<Policial | null>(null);
   const [materialAlvo, setMaterialAlvo] = useState<MaterialTipo | undefined>();
+  const [novoPolicial, setNovoPolicial] = useState(false);
+  const [novoMaterial, setNovoMaterial] = useState("");
 
   const postos = useMemo(
     () => Array.from(new Set(policiais.map((p) => p.posto))).sort(),
@@ -100,17 +115,59 @@ function Index() {
   const vencidos = policiais.filter((p) => statusPolicial(p) === "VENCIDO").length;
   const aVencer = policiais.filter((p) => statusPolicial(p) === "A VENCER").length;
 
-  const porMaterial = MATERIAIS.map((m) => {
+  const porMaterial = materiais.map((m) => {
     const entregues = policiais.filter((p) => p.itens[m]).length;
     const vencidosM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "VENCIDO").length;
     const aVencerM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "A VENCER").length;
     return { material: m, entregues, vencidosM, aVencerM };
   });
 
+  async function criarPolicial(dados: { re: string; nome: string; posto: string }) {
+    try {
+      await adicionarPolicial(dados);
+      toast.success(`${dados.nome} adicionado ao efetivo.`);
+    } catch {
+      toast.error("Não foi possível adicionar. Verifique se o RE já existe.");
+    }
+  }
+
+  async function excluirPolicial(p: Policial) {
+    if (!window.confirm(`Remover ${p.nome} (RE ${p.re}) e suas entregas?`)) return;
+    try {
+      await removerPolicial(p.re);
+      toast.success("Policial removido.");
+    } catch {
+      toast.error("Não foi possível remover.");
+    }
+  }
+
+  async function criarMaterial() {
+    const nome = novoMaterial.trim();
+    if (!nome) return;
+    try {
+      await adicionarMaterial(nome);
+      setNovoMaterial("");
+      toast.success(`Material "${nome}" adicionado.`);
+    } catch {
+      toast.error("Não foi possível adicionar. Esse material já existe?");
+    }
+  }
+
+  async function excluirMaterial(nome: string) {
+    if (!window.confirm(`Remover o material "${nome}" e todas as suas entregas?`)) return;
+    try {
+      await removerMaterial(nome);
+      toast.success("Material removido.");
+    } catch {
+      toast.error("Não foi possível remover.");
+    }
+  }
+
   function exportar() {
     const linhas = policiais.map((p) => {
       const base: Record<string, string> = { "Posto/Graduação": p.posto, RE: p.re, Nome: p.nome };
-      for (const m of MATERIAIS) {
+      for (const m of materiais) {
+
         base[`${m} Entrega`] = formatarData(p.itens[m]?.entrega);
         base[`${m} Validade`] = formatarData(p.itens[m]?.validade);
         base[`${m} Status`] = statusDe(p.itens[m]?.validade);
@@ -226,7 +283,13 @@ function Index() {
                   <SelectItem value="SEM ENTREGA">Sem entrega</SelectItem>
                 </SelectContent>
               </Select>
+              {podeEditar && (
+                <Button onClick={() => setNovoPolicial(true)}>
+                  <Plus /> Adicionar policial
+                </Button>
+              )}
             </div>
+
 
             <div className="overflow-hidden rounded-md border border-border bg-card">
               <Table>
@@ -251,7 +314,7 @@ function Index() {
                       </TableCell>
                       <TableCell className="font-medium">{p.nome}</TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {Object.keys(p.itens).length}/{MATERIAIS.length}
+                        {Object.keys(p.itens).length}/{materiais.length}
                       </TableCell>
                       <TableCell>
                         <StatusBadge status={statusPolicial(p)} />
@@ -262,19 +325,30 @@ function Index() {
                             <ClipboardList className="size-4" /> Ficha
                           </Button>
                           {podeEditar && (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => {
-                                setMaterialAlvo(undefined);
-                                setEntregaAlvo(p);
-                              }}
-                            >
-                              Entrega
-                            </Button>
+                            <>
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => {
+                                  setMaterialAlvo(undefined);
+                                  setEntregaAlvo(p);
+                                }}
+                              >
+                                Entrega
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                aria-label={`Remover ${p.nome}`}
+                                onClick={() => excluirPolicial(p)}
+                              >
+                                <Trash2 className="size-4 text-destructive" />
+                              </Button>
+                            </>
                           )}
                         </div>
                       </TableCell>
+
                     </TableRow>
                   ))}
                   {!filtrados.length && (
@@ -289,7 +363,23 @@ function Index() {
             </div>
           </TabsContent>
 
-          <TabsContent value="materiais">
+          <TabsContent value="materiais" className="space-y-4">
+            {podeEditar && (
+              <div className="flex flex-wrap items-center gap-3">
+                <Input
+                  className="min-w-64 flex-1"
+                  placeholder="Novo tipo de material (ex.: Colete balístico)"
+                  value={novoMaterial}
+                  onChange={(e) => setNovoMaterial(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") criarMaterial();
+                  }}
+                />
+                <Button onClick={criarMaterial} disabled={!novoMaterial.trim()}>
+                  <Plus /> Adicionar material
+                </Button>
+              </div>
+            )}
             <div className="overflow-hidden rounded-md border border-border bg-card">
               <Table>
                 <TableHeader>
@@ -299,6 +389,7 @@ function Index() {
                     <TableHead className="label-industrial text-right">Pendentes</TableHead>
                     <TableHead className="label-industrial text-right">A vencer</TableHead>
                     <TableHead className="label-industrial text-right">Vencidos</TableHead>
+                    <TableHead className="label-industrial text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -315,12 +406,32 @@ function Index() {
                       <TableCell className="text-right tabular-nums text-destructive">
                         {r.vencidosM}
                       </TableCell>
+                      <TableCell className="text-right">
+                        {podeEditar && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            aria-label={`Remover ${r.material}`}
+                            onClick={() => excluirMaterial(r.material)}
+                          >
+                            <Trash2 className="size-4 text-destructive" />
+                          </Button>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
+                  {!porMaterial.length && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="py-12 text-center text-muted-foreground">
+                        Nenhum tipo de material cadastrado.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
           </TabsContent>
+
 
           <TabsContent value="historico">
             <div className="overflow-hidden rounded-md border border-border bg-card">
@@ -370,7 +481,9 @@ function Index() {
 
       <FichaDialog
         policial={ficha}
+        materiais={materiais}
         podeEditar={podeEditar}
+
         onFechar={() => setFicha(null)}
         onRegistrar={(m) => {
           setMaterialAlvo(m);
@@ -389,7 +502,10 @@ function Index() {
       />
       <EntregaDialog
         policial={entregaAlvo}
+        materiais={materiais}
         materialInicial={materialAlvo}
+
+
         onFechar={() => setEntregaAlvo(null)}
         onSalvar={async (material, dados) => {
           if (!entregaAlvo) return;
@@ -404,7 +520,13 @@ function Index() {
           }
         }}
       />
+      <PolicialDialog
+        aberto={novoPolicial}
+        onFechar={() => setNovoPolicial(false)}
+        onSalvar={criarPolicial}
+      />
     </div>
+
   );
 }
 
