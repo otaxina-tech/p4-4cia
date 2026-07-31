@@ -44,6 +44,7 @@ export function EntregaDialog({
   const [validade, setValidade] = useState(somaAnos(hoje(), 1));
   const [observacoes, setObservacoes] = useState("");
   const [responsavel, setResponsavel] = useState("");
+  const [recibo, setRecibo] = useState("");
 
   useEffect(() => {
     if (!policial) return;
@@ -54,6 +55,7 @@ export function EntregaDialog({
     setValidade(existente?.validade ?? somaAnos(hoje(), 1));
     setObservacoes(existente?.observacoes ?? "");
     setResponsavel(existente?.responsavel ?? "");
+    setRecibo(existente?.recibo ?? "");
   }, [policial, materialInicial, materiais]);
 
   return (
