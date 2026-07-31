@@ -55,6 +55,8 @@ import {
 } from "@/lib/controle";
 
 type Direcao = "asc" | "desc";
+type ColunaEfetivo = "posto" | "re" | "nome" | "itens" | "situacao";
+type ColunaMaterial = "material" | "entregues" | "pendentes" | "aVencerM" | "vencidosM";
 type Ordenacao<C extends string> = { coluna: C; direcao: Direcao };
 
 function SortHeader<C extends string>({
