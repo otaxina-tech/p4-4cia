@@ -44,6 +44,7 @@ export function EntregaDialog({
   const [validade, setValidade] = useState(somaAnos(hoje(), 1));
   const [observacoes, setObservacoes] = useState("");
   const [responsavel, setResponsavel] = useState("");
+  const [recibo, setRecibo] = useState("");
 
   useEffect(() => {
     if (!policial) return;
@@ -54,6 +55,7 @@ export function EntregaDialog({
     setValidade(existente?.validade ?? somaAnos(hoje(), 1));
     setObservacoes(existente?.observacoes ?? "");
     setResponsavel(existente?.responsavel ?? "");
+    setRecibo(existente?.recibo ?? "");
   }, [policial, materialInicial, materiais]);
 
   return (
@@ -97,6 +99,14 @@ export function EntregaDialog({
             <Input type="date" value={validade} onChange={(e) => setValidade(e.target.value)} />
           </div>
           <div className="col-span-2 space-y-1.5">
+            <Label className="label-industrial">Recibo nº</Label>
+            <Input
+              value={recibo}
+              placeholder="Ex.: 001/2026"
+              onChange={(e) => setRecibo(e.target.value)}
+            />
+          </div>
+          <div className="col-span-2 space-y-1.5">
             <Label className="label-industrial">Responsável</Label>
             <Input value={responsavel} onChange={(e) => setResponsavel(e.target.value)} />
           </div>
@@ -116,7 +126,7 @@ export function EntregaDialog({
           <Button
             disabled={!material || !entrega || !validade}
             onClick={() => {
-              onSalvar(material, { entrega, validade, observacoes, responsavel });
+              onSalvar(material, { entrega, validade, observacoes, responsavel, recibo });
               onFechar();
             }}
           >

@@ -58,6 +58,7 @@ export function FichaDialog({
                       <p className="text-xs text-muted-foreground">
                         Entrega {formatarData(item?.entrega)} · Validade{" "}
                         {formatarData(item?.validade)}
+                        {item?.recibo ? ` · Recibo nº ${item.recibo}` : ""}
                         {item?.responsavel ? ` · Resp. ${item.responsavel}` : ""}
                       </p>
                     </div>

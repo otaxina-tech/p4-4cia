@@ -24,6 +24,7 @@ export type Database = {
           observacoes: string
           posto: string
           re: string
+          recibo: string
           responsavel: string
           updated_at: string
           validade: string
@@ -37,6 +38,7 @@ export type Database = {
           observacoes?: string
           posto?: string
           re: string
+          recibo?: string
           responsavel?: string
           updated_at?: string
           validade: string
@@ -50,6 +52,7 @@ export type Database = {
           observacoes?: string
           posto?: string
           re?: string
+          recibo?: string
           responsavel?: string
           updated_at?: string
           validade?: string
@@ -65,6 +68,7 @@ export type Database = {
           nome: string
           observacoes: string
           re: string
+          recibo: string
           responsavel: string
           validade: string
         }
@@ -76,6 +80,7 @@ export type Database = {
           nome: string
           observacoes?: string
           re: string
+          recibo?: string
           responsavel?: string
           validade: string
         }
@@ -87,6 +92,7 @@ export type Database = {
           nome?: string
           observacoes?: string
           re?: string
+          recibo?: string
           responsavel?: string
           validade?: string
         }

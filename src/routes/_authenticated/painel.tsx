@@ -261,6 +261,7 @@ function Index() {
 
         base[`${m} Entrega`] = formatarData(p.itens[m]?.entrega);
         base[`${m} Validade`] = formatarData(p.itens[m]?.validade);
+        base[`${m} Recibo nº`] = p.itens[m]?.recibo ?? "";
         base[`${m} Status`] = statusDe(p.itens[m]?.validade);
       }
       return base;
@@ -563,6 +564,7 @@ function Index() {
                     <TableHead className="label-industrial">Material</TableHead>
                     <TableHead className="label-industrial">Entrega</TableHead>
                     <TableHead className="label-industrial">Validade</TableHead>
+                    <TableHead className="label-industrial">Recibo nº</TableHead>
                     <TableHead className="label-industrial">Responsável</TableHead>
                     <TableHead className="label-industrial">Observações</TableHead>
                   </TableRow>
@@ -580,13 +582,16 @@ function Index() {
                       <TableCell>{h.material}</TableCell>
                       <TableCell>{formatarData(h.entrega)}</TableCell>
                       <TableCell>{formatarData(h.validade)}</TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {h.recibo || "—"}
+                      </TableCell>
                       <TableCell className="text-muted-foreground">{h.responsavel || "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{h.observacoes || "—"}</TableCell>
                     </TableRow>
                   ))}
                   {!historico.length && (
                     <TableRow>
-                      <TableCell colSpan={8} className="py-12 text-center text-muted-foreground">
+                      <TableCell colSpan={9} className="py-12 text-center text-muted-foreground">
                         Nenhuma entrega registrada ainda.
                       </TableCell>
                     </TableRow>

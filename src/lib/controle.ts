@@ -18,6 +18,7 @@ export type Entrega = {
   validade: string; // ISO date
   observacoes?: string;
   responsavel?: string;
+  recibo?: string;
 };
 
 export type Policial = {
@@ -38,6 +39,7 @@ export type Registro = {
   validade: string;
   observacoes: string;
   responsavel: string;
+  recibo: string;
 };
 
 export type StatusItem = "VÁLIDO" | "A VENCER" | "VENCIDO" | "SEM ENTREGA";

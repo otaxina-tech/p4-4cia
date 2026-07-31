@@ -1,0 +1,2 @@
+ALTER TABLE public.entregas ADD COLUMN IF NOT EXISTS recibo text NOT NULL DEFAULT '';
+ALTER TABLE public.historico ADD COLUMN IF NOT EXISTS recibo text NOT NULL DEFAULT '';
