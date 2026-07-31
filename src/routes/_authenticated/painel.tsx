@@ -560,6 +560,93 @@ function Index() {
             </div>
           </TabsContent>
 
+          <TabsContent value="recibos" className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm text-muted-foreground">
+                Numeração sequencial no padrão{" "}
+                <span className="font-mono text-foreground">060/440/26</span> — apenas os três
+                primeiros dígitos avançam.
+              </p>
+              {podeEditar && (
+                <Button
+                  onClick={() => {
+                    setReciboAlvo(undefined);
+                    setNovoRecibo(true);
+                  }}
+                >
+                  <Plus /> Emitir recibo
+                </Button>
+              )}
+            </div>
+            <div className="overflow-hidden rounded-md border border-border bg-card">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="label-industrial">Recibo nº</TableHead>
+                    <TableHead className="label-industrial">Data</TableHead>
+                    <TableHead className="label-industrial">Posto</TableHead>
+                    <TableHead className="label-industrial">RE</TableHead>
+                    <TableHead className="label-industrial">Policial</TableHead>
+                    <TableHead className="label-industrial">Itens</TableHead>
+                    <TableHead className="label-industrial text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recibos.map((r) => (
+                    <TableRow key={r.id}>
+                      <TableCell className="font-mono text-xs">{r.codigo}</TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {formatarData(r.data)}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {r.posto}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {r.re}
+                      </TableCell>
+                      <TableCell className="font-medium">{r.nome}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {r.itens.map((i) => i.material).join(", ") || "—"}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-end gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => setReciboVisto(r)}>
+                            <ClipboardList className="size-4" /> Ver
+                          </Button>
+                          {admin && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              aria-label={`Remover recibo ${r.codigo}`}
+                              onClick={async () => {
+                                if (!window.confirm(`Remover o recibo ${r.codigo}?`)) return;
+                                try {
+                                  await removerRecibo(r.id);
+                                  toast.success("Recibo removido.");
+                                } catch {
+                                  toast.error("Não foi possível remover.");
+                                }
+                              }}
+                            >
+                              <Trash2 className="size-4 text-destructive" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {!recibos.length && (
+                    <TableRow>
+                      <TableCell colSpan={7} className="py-12 text-center text-muted-foreground">
+                        Nenhum recibo emitido ainda.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+
 
           <TabsContent value="historico">
             <div className="overflow-hidden rounded-md border border-border bg-card">
