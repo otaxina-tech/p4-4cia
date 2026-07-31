@@ -283,7 +283,13 @@ function Index() {
                   <SelectItem value="SEM ENTREGA">Sem entrega</SelectItem>
                 </SelectContent>
               </Select>
+              {podeEditar && (
+                <Button onClick={() => setNovoPolicial(true)}>
+                  <Plus /> Adicionar policial
+                </Button>
+              )}
             </div>
+
 
             <div className="overflow-hidden rounded-md border border-border bg-card">
               <Table>
