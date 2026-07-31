@@ -14,12 +14,13 @@ type LinhaEntrega = {
   validade: string;
   responsavel: string;
   observacoes: string;
+  recibo: string;
 };
 
 async function buscarEntregas(): Promise<LinhaEntrega[]> {
   const { data, error } = await supabase
     .from("entregas")
-    .select("id, re, nome, posto, material, entrega, validade, responsavel, observacoes");
+    .select("id, re, nome, posto, material, entrega, validade, responsavel, observacoes, recibo");
   if (error) throw error;
   return (data ?? []) as LinhaEntrega[];
 }
@@ -27,7 +28,7 @@ async function buscarEntregas(): Promise<LinhaEntrega[]> {
 async function buscarHistorico(): Promise<Registro[]> {
   const { data, error } = await supabase
     .from("historico")
-    .select("id, data, re, nome, material, entrega, validade, responsavel, observacoes")
+    .select("id, data, re, nome, material, entrega, validade, responsavel, observacoes, recibo")
     .order("data", { ascending: false })
     .limit(500);
   if (error) throw error;
@@ -54,6 +55,7 @@ export function useControle() {
           validade: l.validade,
           responsavel: l.responsavel,
           observacoes: l.observacoes,
+          recibo: l.recibo,
         };
       }
       return { id: p.id, posto: p.posto, re: p.re, nome: p.nome, itens };
@@ -84,6 +86,7 @@ export function useControle() {
         validade: dados.validade,
         responsavel: dados.responsavel ?? "",
         observacoes: dados.observacoes ?? "",
+        recibo: dados.recibo ?? "",
       };
       const { error } = await supabase.from("entregas").upsert(linha, { onConflict: "re,material" });
       if (error) throw error;
@@ -95,6 +98,7 @@ export function useControle() {
         validade: linha.validade,
         responsavel: linha.responsavel,
         observacoes: linha.observacoes,
+        recibo: linha.recibo,
       });
       if (erroHist) throw erroHist;
     },
