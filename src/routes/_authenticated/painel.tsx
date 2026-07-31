@@ -505,6 +505,7 @@ function Index() {
         materiais={materiais}
         materialInicial={materialAlvo}
 
+
         onFechar={() => setEntregaAlvo(null)}
         onSalvar={async (material, dados) => {
           if (!entregaAlvo) return;
