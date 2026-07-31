@@ -73,3 +73,24 @@ export function statusPolicial(p: Policial): StatusItem {
 
 export const formatarData = (iso?: string) =>
   iso ? new Date(`${iso}T00:00:00`).toLocaleDateString("pt-BR") : "—";
+
+/** Hierarquia militar (do mais alto para o mais baixo). */
+const HIERARQUIA = [
+  "CEL", "TEN CEL", "MAJ", "CAP", "1° TEN", "1º TEN", "2° TEN", "2º TEN",
+  "ASP", "SUB TEN", "ST", "1° SGT", "1º SGT", "2° SGT", "2º SGT",
+  "3° SGT", "3º SGT", "CB", "SD",
+];
+
+/** Índice do posto na hierarquia militar; postos desconhecidos vão para o fim. */
+export function ordemPosto(posto?: string): number {
+  const alvo = (posto ?? "").toUpperCase().replace(/\s*PM\s*$/, "").trim();
+  const i = HIERARQUIA.findIndex((h) => h === alvo);
+  return i === -1 ? HIERARQUIA.length : i;
+}
+
+export const ORDEM_STATUS: Record<StatusItem, number> = {
+  VENCIDO: 0,
+  "A VENCER": 1,
+  "VÁLIDO": 2,
+  "SEM ENTREGA": 3,
+};
