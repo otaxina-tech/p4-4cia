@@ -489,11 +489,25 @@ function Index() {
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="label-industrial">Material</TableHead>
-                    <TableHead className="label-industrial text-right">Entregues</TableHead>
-                    <TableHead className="label-industrial text-right">Pendentes</TableHead>
-                    <TableHead className="label-industrial text-right">A vencer</TableHead>
-                    <TableHead className="label-industrial text-right">Vencidos</TableHead>
+                    {(
+                      [
+                        ["material", "Material", ""],
+                        ["entregues", "Entregues", "text-right"],
+                        ["pendentes", "Pendentes", "text-right"],
+                        ["aVencerM", "A vencer", "text-right"],
+                        ["vencidosM", "Vencidos", "text-right"],
+                      ] as [ColunaMaterial, string, string][]
+                    ).map(([col, rotulo, cls]) => (
+                      <SortHeader
+                        key={col}
+                        coluna={col}
+                        ordem={ordemMaterial}
+                        onOrdenar={(c) => alternar(setOrdemMaterial, c)}
+                        className={cls}
+                      >
+                        {rotulo}
+                      </SortHeader>
+                    ))}
                     <TableHead className="label-industrial text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
