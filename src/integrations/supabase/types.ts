@@ -176,6 +176,51 @@ export type Database = {
         }
         Relationships: []
       }
+      recibos: {
+        Row: {
+          codigo: string
+          created_at: string
+          data: string
+          id: string
+          itens: Json
+          nome: string
+          numero: number
+          observacoes: string
+          posto: string
+          re: string
+          responsavel: string
+          updated_at: string
+        }
+        Insert: {
+          codigo?: string
+          created_at?: string
+          data?: string
+          id?: string
+          itens?: Json
+          nome: string
+          numero?: number
+          observacoes?: string
+          posto?: string
+          re: string
+          responsavel?: string
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string
+          created_at?: string
+          data?: string
+          id?: string
+          itens?: Json
+          nome?: string
+          numero?: number
+          observacoes?: string
+          posto?: string
+          re?: string
+          responsavel?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
