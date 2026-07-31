@@ -502,7 +502,9 @@ function Index() {
       />
       <EntregaDialog
         policial={entregaAlvo}
+        materiais={materiais}
         materialInicial={materialAlvo}
+
         onFechar={() => setEntregaAlvo(null)}
         onSalvar={async (material, dados) => {
           if (!entregaAlvo) return;
