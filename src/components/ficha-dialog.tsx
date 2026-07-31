@@ -61,6 +61,12 @@ export function FichaDialog({
                         {item?.recibo ? ` · Recibo nº ${item.recibo}` : ""}
                         {item?.responsavel ? ` · Resp. ${item.responsavel}` : ""}
                       </p>
+                      {item?.observacoes ? (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          <span className="label-industrial">Observações:</span>{" "}
+                          {item.observacoes}
+                        </p>
+                      ) : null}
                     </div>
                     <div className="flex items-center gap-2">
                       {dias !== null && (
