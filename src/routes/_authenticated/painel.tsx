@@ -2,6 +2,9 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   AlertTriangle,
+  ArrowDown,
+  ArrowUp,
+  ChevronsUpDown,
   CalendarClock,
   CheckCircle2,
   ClipboardList,
@@ -43,11 +46,49 @@ import { useAcesso } from "@/hooks/use-acesso";
 import { AguardandoAprovacao, useSair } from "@/components/acesso-gate";
 import {
   formatarData,
+  ordemPosto,
+  ORDEM_STATUS,
   statusDe,
   statusPolicial,
   type MaterialTipo,
   type Policial,
 } from "@/lib/controle";
+
+type Direcao = "asc" | "desc";
+type ColunaEfetivo = "posto" | "re" | "nome" | "itens" | "situacao";
+type ColunaMaterial = "material" | "entregues" | "pendentes" | "aVencerM" | "vencidosM";
+type Ordenacao<C extends string> = { coluna: C; direcao: Direcao };
+
+function SortHeader<C extends string>({
+  coluna,
+  ordem,
+  onOrdenar,
+  className,
+  children,
+}: {
+  coluna: C;
+  ordem: Ordenacao<C>;
+  onOrdenar: (c: C) => void;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const ativo = ordem.coluna === coluna;
+  const Icone = !ativo ? ChevronsUpDown : ordem.direcao === "asc" ? ArrowUp : ArrowDown;
+  return (
+    <TableHead className={`label-industrial ${className ?? ""}`}>
+      <button
+        type="button"
+        onClick={() => onOrdenar(coluna)}
+        className={`inline-flex items-center gap-1 hover:text-foreground ${
+          ativo ? "text-foreground" : ""
+        } ${className?.includes("text-right") ? "w-full justify-end" : ""}`}
+      >
+        {children}
+        <Icone className="size-3" />
+      </button>
+    </TableHead>
+  );
+}
 
 
 export const Route = createFileRoute("/_authenticated/painel")({
@@ -93,34 +134,84 @@ function Index() {
   const [materialAlvo, setMaterialAlvo] = useState<MaterialTipo | undefined>();
   const [novoPolicial, setNovoPolicial] = useState(false);
   const [novoMaterial, setNovoMaterial] = useState("");
+  const [ordemEfetivo, setOrdemEfetivo] = useState<Ordenacao<ColunaEfetivo>>({
+    coluna: "posto",
+    direcao: "asc",
+  });
+  const [ordemMaterial, setOrdemMaterial] = useState<Ordenacao<ColunaMaterial>>({
+    coluna: "material",
+    direcao: "asc",
+  });
+
+  const alternar = <C extends string>(
+    set: React.Dispatch<React.SetStateAction<Ordenacao<C>>>,
+    coluna: C,
+  ) =>
+    set((o) =>
+      o.coluna === coluna
+        ? { coluna, direcao: o.direcao === "asc" ? "desc" : "asc" }
+        : { coluna, direcao: "asc" },
+    );
 
   const postos = useMemo(
-    () => Array.from(new Set(policiais.map((p) => p.posto))).sort(),
+    () =>
+      Array.from(new Set(policiais.map((p) => p.posto))).sort(
+        (a, b) => ordemPosto(a) - ordemPosto(b) || a.localeCompare(b, "pt-BR"),
+      ),
     [policiais],
   );
 
-  const filtrados = useMemo(
-    () =>
-      policiais.filter((p) => {
-        const alvo = `${p.posto} ${p.re} ${p.nome}`.toLowerCase();
-        if (busca && !alvo.includes(busca.toLowerCase())) return false;
-        if (posto !== "todos" && p.posto !== posto) return false;
-        if (status !== "todos" && statusPolicial(p) !== status) return false;
-        return true;
-      }),
-    [policiais, busca, posto, status],
-  );
+  const filtrados = useMemo(() => {
+    const lista = policiais.filter((p) => {
+      const alvo = `${p.posto} ${p.re} ${p.nome}`.toLowerCase();
+      if (busca && !alvo.includes(busca.toLowerCase())) return false;
+      if (posto !== "todos" && p.posto !== posto) return false;
+      if (status !== "todos" && statusPolicial(p) !== status) return false;
+      return true;
+    });
+    const sinal = ordemEfetivo.direcao === "asc" ? 1 : -1;
+    return [...lista].sort((a, b) => {
+      let d = 0;
+      switch (ordemEfetivo.coluna) {
+        case "posto":
+          d = ordemPosto(a.posto) - ordemPosto(b.posto) || a.nome.localeCompare(b.nome, "pt-BR");
+          break;
+        case "re":
+          d = a.re.localeCompare(b.re, "pt-BR", { numeric: true });
+          break;
+        case "nome":
+          d = a.nome.localeCompare(b.nome, "pt-BR");
+          break;
+        case "itens":
+          d = Object.keys(a.itens).length - Object.keys(b.itens).length;
+          break;
+        case "situacao":
+          d = ORDEM_STATUS[statusPolicial(a)] - ORDEM_STATUS[statusPolicial(b)];
+          break;
+      }
+      return d * sinal;
+    });
+  }, [policiais, busca, posto, status, ordemEfetivo]);
 
   const itensEntregues = policiais.reduce((s, p) => s + Object.keys(p.itens).length, 0);
   const vencidos = policiais.filter((p) => statusPolicial(p) === "VENCIDO").length;
   const aVencer = policiais.filter((p) => statusPolicial(p) === "A VENCER").length;
 
-  const porMaterial = materiais.map((m) => {
-    const entregues = policiais.filter((p) => p.itens[m]).length;
-    const vencidosM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "VENCIDO").length;
-    const aVencerM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "A VENCER").length;
-    return { material: m, entregues, vencidosM, aVencerM };
-  });
+  const porMaterial = useMemo(() => {
+    const linhas = materiais.map((m) => {
+      const entregues = policiais.filter((p) => p.itens[m]).length;
+      const vencidosM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "VENCIDO").length;
+      const aVencerM = policiais.filter((p) => statusDe(p.itens[m]?.validade) === "A VENCER").length;
+      return { material: m, entregues, pendentes: policiais.length - entregues, vencidosM, aVencerM };
+    });
+    const sinal = ordemMaterial.direcao === "asc" ? 1 : -1;
+    return linhas.sort((a, b) => {
+      const c = ordemMaterial.coluna;
+      const d =
+        c === "material" ? a.material.localeCompare(b.material, "pt-BR") : a[c] - b[c];
+      return d * sinal;
+    });
+  }, [materiais, policiais, ordemMaterial]);
 
   async function criarPolicial(dados: { re: string; nome: string; posto: string }) {
     try {
@@ -295,11 +386,25 @@ function Index() {
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="label-industrial">Posto</TableHead>
-                    <TableHead className="label-industrial">RE</TableHead>
-                    <TableHead className="label-industrial">Nome</TableHead>
-                    <TableHead className="label-industrial text-right">Itens</TableHead>
-                    <TableHead className="label-industrial">Situação</TableHead>
+                    {(
+                      [
+                        ["posto", "Posto", ""],
+                        ["re", "RE", ""],
+                        ["nome", "Nome", ""],
+                        ["itens", "Itens", "text-right"],
+                        ["situacao", "Situação", ""],
+                      ] as [ColunaEfetivo, string, string][]
+                    ).map(([col, rotulo, cls]) => (
+                      <SortHeader
+                        key={col}
+                        coluna={col}
+                        ordem={ordemEfetivo}
+                        onOrdenar={(c) => alternar(setOrdemEfetivo, c)}
+                        className={cls}
+                      >
+                        {rotulo}
+                      </SortHeader>
+                    ))}
                     <TableHead className="label-industrial text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -384,11 +489,25 @@ function Index() {
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="label-industrial">Material</TableHead>
-                    <TableHead className="label-industrial text-right">Entregues</TableHead>
-                    <TableHead className="label-industrial text-right">Pendentes</TableHead>
-                    <TableHead className="label-industrial text-right">A vencer</TableHead>
-                    <TableHead className="label-industrial text-right">Vencidos</TableHead>
+                    {(
+                      [
+                        ["material", "Material", ""],
+                        ["entregues", "Entregues", "text-right"],
+                        ["pendentes", "Pendentes", "text-right"],
+                        ["aVencerM", "A vencer", "text-right"],
+                        ["vencidosM", "Vencidos", "text-right"],
+                      ] as [ColunaMaterial, string, string][]
+                    ).map(([col, rotulo, cls]) => (
+                      <SortHeader
+                        key={col}
+                        coluna={col}
+                        ordem={ordemMaterial}
+                        onOrdenar={(c) => alternar(setOrdemMaterial, c)}
+                        className={cls}
+                      >
+                        {rotulo}
+                      </SortHeader>
+                    ))}
                     <TableHead className="label-industrial text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
