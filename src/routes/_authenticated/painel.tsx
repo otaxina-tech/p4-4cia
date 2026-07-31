@@ -43,11 +43,47 @@ import { useAcesso } from "@/hooks/use-acesso";
 import { AguardandoAprovacao, useSair } from "@/components/acesso-gate";
 import {
   formatarData,
+  ordemPosto,
+  ORDEM_STATUS,
   statusDe,
   statusPolicial,
   type MaterialTipo,
   type Policial,
 } from "@/lib/controle";
+
+type Direcao = "asc" | "desc";
+type Ordenacao<C extends string> = { coluna: C; direcao: Direcao };
+
+function SortHeader<C extends string>({
+  coluna,
+  ordem,
+  onOrdenar,
+  className,
+  children,
+}: {
+  coluna: C;
+  ordem: Ordenacao<C>;
+  onOrdenar: (c: C) => void;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const ativo = ordem.coluna === coluna;
+  const Icone = !ativo ? ChevronsUpDown : ordem.direcao === "asc" ? ArrowUp : ArrowDown;
+  return (
+    <TableHead className={`label-industrial ${className ?? ""}`}>
+      <button
+        type="button"
+        onClick={() => onOrdenar(coluna)}
+        className={`inline-flex items-center gap-1 hover:text-foreground ${
+          ativo ? "text-foreground" : ""
+        } ${className?.includes("text-right") ? "w-full justify-end" : ""}`}
+      >
+        {children}
+        <Icone className="size-3" />
+      </button>
+    </TableHead>
+  );
+}
 
 
 export const Route = createFileRoute("/_authenticated/painel")({
