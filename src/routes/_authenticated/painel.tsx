@@ -314,7 +314,7 @@ function Index() {
                       </TableCell>
                       <TableCell className="font-medium">{p.nome}</TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {Object.keys(p.itens).length}/{MATERIAIS.length}
+                        {Object.keys(p.itens).length}/{materiais.length}
                       </TableCell>
                       <TableCell>
                         <StatusBadge status={statusPolicial(p)} />
@@ -325,19 +325,30 @@ function Index() {
                             <ClipboardList className="size-4" /> Ficha
                           </Button>
                           {podeEditar && (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => {
-                                setMaterialAlvo(undefined);
-                                setEntregaAlvo(p);
-                              }}
-                            >
-                              Entrega
-                            </Button>
+                            <>
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => {
+                                  setMaterialAlvo(undefined);
+                                  setEntregaAlvo(p);
+                                }}
+                              >
+                                Entrega
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                aria-label={`Remover ${p.nome}`}
+                                onClick={() => excluirPolicial(p)}
+                              >
+                                <Trash2 className="size-4 text-destructive" />
+                              </Button>
+                            </>
                           )}
                         </div>
                       </TableCell>
+
                     </TableRow>
                   ))}
                   {!filtrados.length && (
