@@ -41,7 +41,10 @@ import { StatusBadge } from "@/components/status-badge";
 import { EntregaDialog } from "@/components/entrega-dialog";
 import { FichaDialog } from "@/components/ficha-dialog";
 import { PolicialDialog } from "@/components/policial-dialog";
+import { ReciboDialog } from "@/components/recibo-dialog";
+import { ReciboView } from "@/components/recibo-view";
 import { useControle } from "@/hooks/use-controle";
+import { useRecibos, type Recibo } from "@/hooks/use-recibos";
 import { useAcesso } from "@/hooks/use-acesso";
 import { AguardandoAprovacao, useSair } from "@/components/acesso-gate";
 import {
