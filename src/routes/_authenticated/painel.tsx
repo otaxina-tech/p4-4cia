@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   AlertTriangle,
   CalendarClock,
   CheckCircle2,
   ClipboardList,
+  Users2,
   FileDown,
   LogOut,
   Search,
@@ -34,9 +35,9 @@ import { toast } from "sonner";
 import { StatusBadge } from "@/components/status-badge";
 import { EntregaDialog } from "@/components/entrega-dialog";
 import { FichaDialog } from "@/components/ficha-dialog";
-import { useQueryClient } from "@tanstack/react-query";
 import { useControle } from "@/hooks/use-controle";
-import { supabase } from "@/integrations/supabase/client";
+import { useAcesso } from "@/hooks/use-acesso";
+import { AguardandoAprovacao, useSair } from "@/components/acesso-gate";
 import {
   formatarData,
   MATERIAIS,
@@ -68,9 +69,9 @@ export const Route = createFileRoute("/_authenticated/painel")({
 
 function Index() {
   const { policiais, historico, registrarEntrega, removerEntrega } = useControle();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const podeEditar = true;
+  const { perfil, admin, aprovado, carregando: carregandoAcesso } = useAcesso();
+  const sair = useSair();
+  const podeEditar = aprovado;
   const [busca, setBusca] = useState("");
   const [posto, setPosto] = useState("todos");
   const [status, setStatus] = useState("todos");
@@ -123,6 +124,9 @@ function Index() {
     toast.success("Planilha exportada.");
   }
 
+  if (carregandoAcesso) return null;
+  if (!aprovado) return <AguardandoAprovacao status={perfil?.status} />;
+
   return (
     <div className="min-h-screen">
       <Toaster />
@@ -143,15 +147,14 @@ function Index() {
             <Button variant="outline" onClick={exportar}>
               <FileDown /> Exportar planilha
             </Button>
-            <Button
-              variant="ghost"
-              onClick={async () => {
-                await queryClient.cancelQueries();
-                queryClient.clear();
-                await supabase.auth.signOut();
-                navigate({ to: "/auth", replace: true });
-              }}
-            >
+            {admin && (
+              <Button variant="outline" asChild>
+                <Link to="/usuarios">
+                  <Users2 /> Usuários
+                </Link>
+              </Button>
+            )}
+            <Button variant="ghost" onClick={sair}>
               <LogOut /> Sair
             </Button>
           </div>
