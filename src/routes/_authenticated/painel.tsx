@@ -744,6 +744,22 @@ function Index() {
         onFechar={() => setNovoPolicial(false)}
         onSalvar={criarPolicial}
       />
+      <ReciboDialog
+        aberto={novoRecibo}
+        policiais={policiais}
+        materiais={materiais}
+        policialInicial={reciboAlvo}
+        onFechar={() => setNovoRecibo(false)}
+        onSalvar={async (v) => {
+          try {
+            const criado = await criarRecibo(v);
+            toast.success(`Recibo ${criado.codigo} emitido para ${v.policial.nome}.`);
+          } catch {
+            toast.error("Não foi possível emitir o recibo.");
+          }
+        }}
+      />
+      <ReciboView recibo={reciboVisto} onFechar={() => setReciboVisto(null)} />
     </div>
 
   );
