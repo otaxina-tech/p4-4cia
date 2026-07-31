@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MATERIAIS, type Entrega, type MaterialTipo, type Policial } from "@/lib/controle";
+import { type Entrega, type MaterialTipo, type Policial } from "@/lib/controle";
 
 const hoje = () => new Date().toISOString().slice(0, 10);
 const somaAnos = (iso: string, anos: number) => {
@@ -28,16 +28,18 @@ const somaAnos = (iso: string, anos: number) => {
 
 export function EntregaDialog({
   policial,
+  materiais,
   materialInicial,
   onFechar,
   onSalvar,
 }: {
   policial: Policial | null;
+  materiais: MaterialTipo[];
   materialInicial?: MaterialTipo;
   onFechar: () => void;
   onSalvar: (material: MaterialTipo, dados: Entrega) => void;
 }) {
-  const [material, setMaterial] = useState<MaterialTipo>(materialInicial ?? MATERIAIS[0]);
+  const [material, setMaterial] = useState<MaterialTipo>(materialInicial ?? materiais[0] ?? "");
   const [entrega, setEntrega] = useState(hoje());
   const [validade, setValidade] = useState(somaAnos(hoje(), 1));
   const [observacoes, setObservacoes] = useState("");
@@ -45,14 +47,14 @@ export function EntregaDialog({
 
   useEffect(() => {
     if (!policial) return;
-    const atual = materialInicial ?? MATERIAIS[0];
+    const atual = materialInicial ?? materiais[0] ?? "";
     const existente = policial.itens[atual];
     setMaterial(atual);
     setEntrega(existente?.entrega ?? hoje());
     setValidade(existente?.validade ?? somaAnos(hoje(), 1));
     setObservacoes(existente?.observacoes ?? "");
     setResponsavel(existente?.responsavel ?? "");
-  }, [policial, materialInicial]);
+  }, [policial, materialInicial, materiais]);
 
   return (
     <Dialog open={!!policial} onOpenChange={(o) => !o && onFechar()}>
@@ -66,12 +68,12 @@ export function EntregaDialog({
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2 space-y-1.5">
             <Label className="label-industrial">Material</Label>
-            <Select value={material} onValueChange={(v) => setMaterial(v as MaterialTipo)}>
+            <Select value={material} onValueChange={(v) => setMaterial(v)}>
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Selecione o material" />
               </SelectTrigger>
               <SelectContent>
-                {MATERIAIS.map((m) => (
+                {materiais.map((m) => (
                   <SelectItem key={m} value={m}>
                     {m}
                   </SelectItem>
@@ -112,7 +114,7 @@ export function EntregaDialog({
             Cancelar
           </Button>
           <Button
-            disabled={!entrega || !validade}
+            disabled={!material || !entrega || !validade}
             onClick={() => {
               onSalvar(material, { entrega, validade, observacoes, responsavel });
               onFechar();
