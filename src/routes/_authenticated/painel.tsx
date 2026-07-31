@@ -363,7 +363,23 @@ function Index() {
             </div>
           </TabsContent>
 
-          <TabsContent value="materiais">
+          <TabsContent value="materiais" className="space-y-4">
+            {podeEditar && (
+              <div className="flex flex-wrap items-center gap-3">
+                <Input
+                  className="min-w-64 flex-1"
+                  placeholder="Novo tipo de material (ex.: Colete balístico)"
+                  value={novoMaterial}
+                  onChange={(e) => setNovoMaterial(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") criarMaterial();
+                  }}
+                />
+                <Button onClick={criarMaterial} disabled={!novoMaterial.trim()}>
+                  <Plus /> Adicionar material
+                </Button>
+              </div>
+            )}
             <div className="overflow-hidden rounded-md border border-border bg-card">
               <Table>
                 <TableHeader>
@@ -373,6 +389,7 @@ function Index() {
                     <TableHead className="label-industrial text-right">Pendentes</TableHead>
                     <TableHead className="label-industrial text-right">A vencer</TableHead>
                     <TableHead className="label-industrial text-right">Vencidos</TableHead>
+                    <TableHead className="label-industrial text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -389,12 +406,32 @@ function Index() {
                       <TableCell className="text-right tabular-nums text-destructive">
                         {r.vencidosM}
                       </TableCell>
+                      <TableCell className="text-right">
+                        {podeEditar && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            aria-label={`Remover ${r.material}`}
+                            onClick={() => excluirMaterial(r.material)}
+                          >
+                            <Trash2 className="size-4 text-destructive" />
+                          </Button>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
+                  {!porMaterial.length && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="py-12 text-center text-muted-foreground">
+                        Nenhum tipo de material cadastrado.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
           </TabsContent>
+
 
           <TabsContent value="historico">
             <div className="overflow-hidden rounded-md border border-border bg-card">
