@@ -61,9 +61,11 @@ function AuthPage() {
     setCarregando(false);
     if (error) return toast.error(error.message);
     if (!data.session) {
-      return toast.success("Conta criada. Confirme o e-mail para poder editar.");
+      return toast.success(
+        "Conta criada. Confirme o e-mail e aguarde a aprovação do administrador.",
+      );
     }
-    toast.success("Conta criada e acesso liberado.");
+    toast.success("Conta criada. Aguarde a aprovação do administrador.");
     navigate({ to: "/painel", replace: true });
   }
 
@@ -85,7 +87,7 @@ function AuthPage() {
           />
           <div>
             <h1 className="text-lg font-bold leading-none">Acesso restrito</h1>
-            <p className="label-industrial mt-1">Somente para editar registros</p>
+            <p className="label-industrial mt-1">Acesso somente para usuários autorizados</p>
           </div>
         </div>
 
@@ -124,8 +126,11 @@ function AuthPage() {
                 autoComplete="new-password"
               />
               <Button type="submit" className="w-full" disabled={carregando}>
-                Criar conta
+                Solicitar conta
               </Button>
+              <p className="text-xs text-muted-foreground">
+                Novas contas ficam pendentes até a aprovação do administrador.
+              </p>
             </form>
           </TabsContent>
         </Tabs>

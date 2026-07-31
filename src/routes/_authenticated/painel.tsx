@@ -38,7 +38,6 @@ import { FichaDialog } from "@/components/ficha-dialog";
 import { useControle } from "@/hooks/use-controle";
 import { useAcesso } from "@/hooks/use-acesso";
 import { AguardandoAprovacao, useSair } from "@/components/acesso-gate";
-import { supabase } from "@/integrations/supabase/client";
 import {
   formatarData,
   MATERIAIS,
