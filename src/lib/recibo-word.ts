@@ -147,13 +147,20 @@ export async function gerarReciboWord(r: Recibo) {
   });
 
   const itens = r.itens.map(
-    (i) =>
+    (i, n) =>
       new Paragraph({
         numbering: { reference: "itens", level: 0 },
         spacing: { after: 80 },
         children: [
           new TextRun({
-            text: `${i.material}${i.observacoes ? `, ${i.observacoes}` : ""};`,
+            text: `${i.material}${i.observacoes ? `, ${i.observacoes}` : ""}${n === r.itens.length - 1 ? "." : ";"}`,
+            size: 24,
+            font: "Times New Roman",
+          }),
+        ],
+      }),
+  );
+
             size: 24,
             font: "Times New Roman",
           }),
