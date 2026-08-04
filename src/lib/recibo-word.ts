@@ -161,12 +161,7 @@ export async function gerarReciboWord(r: Recibo) {
       }),
   );
 
-            size: 24,
-            font: "Times New Roman",
-          }),
-        ],
-      }),
-  );
+
 
   const assinaturas = new Table({
     width: { size: 7500, type: WidthType.DXA },
