@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -6,9 +7,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Printer } from "lucide-react";
+import { FileText, Printer } from "lucide-react";
 import type { Recibo } from "@/hooks/use-recibos";
 import { formatarData } from "@/lib/controle";
+import { gerarReciboWord } from "@/lib/recibo-word";
+
 
 function imprimir(r: Recibo) {
   const linhas = r.itens
@@ -65,7 +68,20 @@ function imprimir(r: Recibo) {
 }
 
 export function ReciboView({ recibo, onFechar }: { recibo: Recibo | null; onFechar: () => void }) {
+  const [gerando, setGerando] = useState(false);
+
+  async function baixarWord() {
+    if (!recibo) return;
+    setGerando(true);
+    try {
+      await gerarReciboWord(recibo);
+    } finally {
+      setGerando(false);
+    }
+  }
+
   return (
+
     <Dialog open={!!recibo} onOpenChange={(o) => !o && onFechar()}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
@@ -101,10 +117,14 @@ export function ReciboView({ recibo, onFechar }: { recibo: Recibo | null; onFech
           <Button variant="ghost" onClick={onFechar}>
             Fechar
           </Button>
+          <Button variant="outline" disabled={!recibo || gerando} onClick={baixarWord}>
+            <FileText /> {gerando ? "Gerando..." : "Gerar Word"}
+          </Button>
           <Button onClick={() => recibo && imprimir(recibo)}>
             <Printer /> Imprimir
           </Button>
         </DialogFooter>
+
       </DialogContent>
     </Dialog>
   );
