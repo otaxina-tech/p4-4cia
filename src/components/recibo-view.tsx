@@ -68,7 +68,20 @@ function imprimir(r: Recibo) {
 }
 
 export function ReciboView({ recibo, onFechar }: { recibo: Recibo | null; onFechar: () => void }) {
+  const [gerando, setGerando] = useState(false);
+
+  async function baixarWord() {
+    if (!recibo) return;
+    setGerando(true);
+    try {
+      await gerarReciboWord(recibo);
+    } finally {
+      setGerando(false);
+    }
+  }
+
   return (
+
     <Dialog open={!!recibo} onOpenChange={(o) => !o && onFechar()}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
