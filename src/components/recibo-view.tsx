@@ -117,10 +117,14 @@ export function ReciboView({ recibo, onFechar }: { recibo: Recibo | null; onFech
           <Button variant="ghost" onClick={onFechar}>
             Fechar
           </Button>
+          <Button variant="outline" disabled={!recibo || gerando} onClick={baixarWord}>
+            <FileText /> {gerando ? "Gerando..." : "Gerar Word"}
+          </Button>
           <Button onClick={() => recibo && imprimir(recibo)}>
             <Printer /> Imprimir
           </Button>
         </DialogFooter>
+
       </DialogContent>
     </Dialog>
   );
