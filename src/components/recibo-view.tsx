@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -6,9 +7,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Printer } from "lucide-react";
+import { FileText, Printer } from "lucide-react";
 import type { Recibo } from "@/hooks/use-recibos";
 import { formatarData } from "@/lib/controle";
+import { gerarReciboWord } from "@/lib/recibo-word";
+
 
 function imprimir(r: Recibo) {
   const linhas = r.itens
